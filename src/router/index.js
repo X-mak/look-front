@@ -2,14 +2,19 @@ import {createRouter,createWebHistory} from 'vue-router'
 
 import Login from '../views/Login.vue'
 import Index from '../views/Index.vue'
+import Register from '../views/Register.vue'
 const routes = [
     {
         path : "/",
-        component : Index
+        component : Index,
     },
     {
         path : "/login",
         component : Login
+    },
+    {
+        path : "/register",
+        component : Register
     }
 ]
 

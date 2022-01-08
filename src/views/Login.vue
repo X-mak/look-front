@@ -15,16 +15,22 @@
     <el-form-item 
       label="密码" prop="pwd"
     >
-      <el-input v-model="form.pwd" type="password"></el-input>
+      <el-input v-model="form.pwd" type="password" @keyup.enter.native="login"></el-input>
     </el-form-item>
     <el-button type="primary" size="default" @click="login">登录</el-button>
+    <el-row>
+      <p>没有账号?点此</p>
+      <el-button type="text" size="default" @click="goRegister">注册</el-button>
+    </el-row>
+   
+    
   </el-form>
 </template>
 
 <script>
 import { ElMessage } from 'element-plus'
 import request from '../utils/request';
-import { reactive, ref } from 'vue'
+
 
 const open = (msg,type) => {
   ElMessage({
@@ -55,7 +61,7 @@ export default {
           params:{username:this.form.username,pwd:this.form.pwd}
         }).then((res)=>{
           console.log(res);
-          this.form = {};
+          this.form.pwd = "";
           if(res.code === "200"){
             open(res.msg,'success');
             this.$router.push('/');
@@ -64,6 +70,10 @@ export default {
           }
       })
       }
+    },
+
+    goRegister(){
+      this.$router.push('/register');
     }
   },
 }
