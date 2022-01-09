@@ -9,13 +9,13 @@ const service = axios.create({
     // headers:{'Content-Type':'application/x-www-form-urlencoded'}// 'multipart/form-data'   //  'application/x-www-form-urlencoded';
 });
 
+const userUrls = [];
+
+
 service.interceptors.request.use(
     config => {
-        // console.log('config.method---:   ' + config.method);
-        console.log('config.url---:   ' + config.url)
-        console.log('config.data---:   ' + config.data);
-        // console.log('config.params---:   ' + config.params);
-        debugger
+        config.headers['Content-Type'] = 'application/json;charset=utf-8';
+        let userJson = sessionStorage.getItem("LoginUser");
         return config;
     },
     error => {

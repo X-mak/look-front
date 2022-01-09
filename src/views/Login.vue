@@ -60,10 +60,10 @@ export default {
           method:'get',
           params:{username:this.form.username,pwd:this.form.pwd}
         }).then((res)=>{
-          console.log(res);
           this.form.pwd = "";
           if(res.code === "200"){
             open(res.msg,'success');
+            sessionStorage.setItem("LoginUser",JSON.stringify(res.data));
             this.$router.push('/');
           }else{
             open(res.msg,'warning');
