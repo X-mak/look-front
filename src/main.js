@@ -11,7 +11,6 @@ app.use(ElementPlus).use(router).use(store).mount('#app')
 
 //路由拦截器，权限控制
 router.beforeEach((to,from,next)=>{
-    console.log(to);
     let userJson = JSON.parse(sessionStorage.getItem("LoginUser"));
     if(to.path.indexOf("/user") >= 0){
         if(userJson.userRole.indexOf('student') >= 0){

@@ -8,9 +8,9 @@
     :rules="rules"
   >
     <el-form-item 
-      label="用户名" prop="username"  
+      label="用户名" prop="userName"  
     >
-      <el-input v-model="form.username" type="text"></el-input>
+      <el-input v-model="form.userName" type="text"></el-input>
     </el-form-item>
     <el-form-item 
       label="密码" prop="pwd"
@@ -45,25 +45,26 @@ export default {
     return{
       form:{},
       rules:{
-        username:[{ required: true,message: '用户名不能为空',trigger: 'blur',}],
+        userName:[{ required: true,message: '用户名不能为空',trigger: 'blur',}],
         pwd:[{ required: true,message: '密码不能为空',trigger: 'blur',}]
       }
     }
   },
   methods: {
     login(){
-      if(this.form.username == null && this.form.pwd == null)
+      if(this.form.userName == null && this.form.pwd == null)
         open("账号或密码不能为空!",'warning');
       else{
         request({
-          url:'/user',
+          url:'/user/check',
           method:'get',
-          params:{username:this.form.username,pwd:this.form.pwd}
+          params:{userName:this.form.userName,pwd:this.form.pwd}
         }).then((res)=>{
           this.form.pwd = "";
           if(res.code === "200"){
             open(res.msg,'success');
             sessionStorage.setItem("LoginUser",JSON.stringify(res.data));
+            console.log(JSON.stringify(res.data));
             this.$router.push('/');
           }else{
             open(res.msg,'warning');

@@ -9,13 +9,22 @@ const service = axios.create({
     // headers:{'Content-Type':'application/x-www-form-urlencoded'}// 'multipart/form-data'   //  'application/x-www-form-urlencoded';
 });
 
-const userUrls = [];
+const whiteUrls = ["/user/check", '/user'];
 
 
 service.interceptors.request.use(
     config => {
         config.headers['Content-Type'] = 'application/json;charset=utf-8';
         let userJson = sessionStorage.getItem("LoginUser");
+        if (!whiteUrls.includes(config.url)) {  // 校验请求白名单
+            console.log(config.url)
+            if(userJson == '{}') {
+                router.push("/login")
+            } else {
+                let user = JSON.parse(userJson);
+                config.headers['token'] = user.token;  // 设置请求头
+            }
+        }
         return config;
     },
     error => {
@@ -27,8 +36,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         if (response.status === 200) {
-            // console.log('response.data---:   ' + response.data.status)
-            return response.data;
+            let res = response.data;
+            if (res.code === '401') {
+                console.error("token过期，重新登录")
+                router.push("/login")
+            }
+            return res;    
         } else {
             Promise.reject();
         }
