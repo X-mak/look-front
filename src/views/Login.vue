@@ -63,8 +63,8 @@ export default {
           this.form.pwd = "";
           if(res.code === "200"){
             open(res.msg,'success');
-            sessionStorage.setItem("LoginUser",JSON.stringify(res.data));
-            console.log(JSON.stringify(res.data));
+            sessionStorage.setItem("token",res.data.token);
+            this.$store.commit('SET_USER', res.data);
             this.$router.push('/');
           }else{
             open(res.msg,'warning');

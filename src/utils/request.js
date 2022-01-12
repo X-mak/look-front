@@ -15,14 +15,12 @@ const whiteUrls = ["/user/check", '/user'];
 service.interceptors.request.use(
     config => {
         config.headers['Content-Type'] = 'application/json;charset=utf-8';
-        let userJson = sessionStorage.getItem("LoginUser");
+        let token = sessionStorage.getItem("token");
         if (!whiteUrls.includes(config.url)) {  // 校验请求白名单
-            console.log(config.url)
-            if(userJson == '{}') {
+            if(token === null) {
                 router.push("/login")
             } else {
-                let user = JSON.parse(userJson);
-                config.headers['token'] = user.token;  // 设置请求头
+                config.headers['token'] = token;  // 设置请求头
             }
         }
         return config;

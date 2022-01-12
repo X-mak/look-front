@@ -1,35 +1,38 @@
 <template>
-    <div>首页</div>
-    <el-button v-if="isEmpty" type="text" size="default" @click="goLogin">登录</el-button>
-    <el-button v-else type="text" size="default" @click="logOut">退出登录</el-button>
+    <IndexHeader/>
     <p>{{LoginUser}}</p>
+    
 </template>
 
 <script>
+import IndexHeader from "../components/index/IndexHeader.vue";
+
 export default {
-    data(){
-        return{
-            LoginUser:{},
-        }
+    data() {
+        return {
+            LoginUser: {},
+        };
     },
-    created() {
-        let str = sessionStorage.getItem("LoginUser") || "{}";
-        this.LoginUser = JSON.parse(str);
+    mounted() {
+        setTimeout(() => {
+            this.LoginUser = this.$store.getters.getUser;
+        });
     },
     methods: {
-        goLogin(){
+        goLogin() {
             this.$router.push("/login");
         },
-        logOut(){
-            sessionStorage.setItem("LoginUser","");
+        logOut() {
+            sessionStorage.setItem("token", "");
             this.LoginUser = {};
-        }
+        },
     },
     computed: {
-        isEmpty(){
-            return JSON.stringify(this.LoginUser) == "{}"
+        isEmpty() {
+            return JSON.stringify(this.LoginUser) == "{}";
         }
     },
+    components: { IndexHeader }
 }
 </script>
 

@@ -1,4 +1,6 @@
 import {createRouter,createWebHistory} from 'vue-router'
+import request from '../utils/request'
+import store from '../store'
 
 import Login from '../views/Login.vue'
 import Index from '../views/Index.vue'
@@ -45,5 +47,28 @@ const router = createRouter({
     history: createWebHistory(),
     routes, // `routes: routes` 的缩写
   })
+
+
+  const whiteUrls = ["/", '/login','/register'];
+//路由拦截器，权限控制
+router.beforeEach((to,from,next)=>{
+    let token = sessionStorage.getItem("token");
+    //不在白名单中需要token
+    if(!whiteUrls.includes(to.path) && (token === null || token === "")){
+        router.push("/login");
+    }
+    else{
+        //有token无store,网页刚刷新,需要从后端拉取用户信息
+        if(!(token === null || token === "") && JSON.stringify(store.state.user) === "{}"){
+            request({
+                url:"/user/confirm",
+                method:"get"
+            }).then((res)=>{
+                store.commit("SET_USER",res.data);
+            })
+        }
+        next();
+    }
+})
   
   export default router
