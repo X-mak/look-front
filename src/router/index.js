@@ -7,7 +7,9 @@ import Index from '../views/Index.vue'
 import Register from '../views/Register.vue'
 import Admin from '../views/Admin.vue'
 import Teacher from '../views/Teacher.vue'
-import User from '../views/User.vue'
+import User from '../views/User/User.vue'
+import UserInfo from "../views/User/UserInfo.vue"
+import UserCourse from "../views/User/UserCourse.vue"
 const routes = [
     {
         path : "/",
@@ -37,7 +39,19 @@ const routes = [
     {
         path : '/user',
         name : 'user',
-        component : User
+        component : User,
+        children:[
+            {
+                path : "info",
+                name : "userInfo",
+                component : UserInfo
+            },
+            {
+                path : "course",
+                name : "userCourse",
+                component : UserCourse
+            }
+        ]
     }
 ]
 
@@ -64,7 +78,7 @@ router.beforeEach((to,from,next)=>{
                 url:"/user/confirm",
                 method:"get"
             }).then((res)=>{
-                store.commit("SET_USER",res.data);
+                store.commit("SET_USER", res.data);
             })
         }
         next();

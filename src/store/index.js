@@ -3,7 +3,6 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     user: {},
-    a:"6"
   },
   mutations: {
     SET_USER(state, user) {
@@ -11,9 +10,6 @@ export default createStore({
     }
   },
   actions: {
-    SET_USER({commit}, user) {
-      this.state.user = user
-    }
   },
   getters: {
     getUser: (state) => state.user

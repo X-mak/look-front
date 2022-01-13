@@ -24,7 +24,7 @@ export default {
             this.$router.push("/login");
         },
         goUser(){
-            this.$router.push("/User");
+            this.$router.push("/user/info");
         }
     },
 }
