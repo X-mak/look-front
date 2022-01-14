@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css'
 import router from './router'
 import store from './store'
 import '../src/assets/css/global.css'
+import 'element-plus/dist/index.css'
 import request from './utils/request';
 const app = createApp(App)
 app.use(ElementPlus).use(router).use(store).mount('#app')
