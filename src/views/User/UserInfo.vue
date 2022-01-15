@@ -27,6 +27,7 @@
       <el-input v-model="userInfo.coins" disabled type="text"></el-input>
     </el-form-item>
     <br />
+    <el-button type="primary" size="default" @click="signIn">签到</el-button>
     <el-button type="primary" size="default" @click="alterInfo"
       >修改当前信息</el-button
     >
@@ -39,7 +40,12 @@
   </el-form>
 
   <!-- 修改头像的消息框 -->
-  <el-dialog v-model="dialogImgVisible" title="修改头像" width="40%">
+  <el-dialog
+    v-model="dialogImgVisible"
+    title="修改头像"
+    width="40%"
+    @closed="cancelImg"
+  >
     <el-form label-width="200px" label-position="left" :model="LoginUser">
       <el-form-item label="原头像:">
         <el-avatar :src="userInfo.userImg" @error="true">
@@ -49,13 +55,13 @@
       <el-form-item label="新头像:">
         <el-upload
           class="avatar-uploader"
+          accept="image/*"
           action="http://localhost:8080/files/user-img"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
-          thumbnail-mode
           :show-file-list="false"
           :multiple="false"
-          limit:1
+          limit="1"
         >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
@@ -71,7 +77,12 @@
   </el-dialog>
 
   <!-- 修改密码的消息框 -->
-  <el-dialog v-model="dialogPwdVisible" title="修改密码" width="40%">
+  <el-dialog
+    v-model="dialogPwdVisible"
+    title="修改密码"
+    width="40%"
+    @closed="cancelPwd"
+  >
     <el-form label-width="200px" label-position="left" :model="LoginUser">
       <el-form-item label="原密码:">
         <el-input v-model="userPwd.old" type="text"></el-input>
@@ -133,6 +144,19 @@ export default {
       }).then((res) => {
         this.LoginUser = res.data;
         this.userInfo = this.LoginUser.userInfo;
+      });
+    },
+    signIn() {
+      request({
+        url: "/manage/sign/" + this.userInfo.userAccount,
+        method: "post",
+      }).then((res) => {
+        if (res.code === "400") {
+          open(res.msg, "warning");
+        } else {
+          open(res.msg, "success");
+          this.load();
+        }
       });
     },
     alterInfo() {
@@ -220,7 +244,6 @@ export default {
       }
     },
     handleAvatarSuccess(res) {
-      console.log(res);
       if (res.code === "400") {
         open(res.msg, "warning");
       } else {
@@ -229,12 +252,7 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
-      console.log(file);
-      if (
-        file.type != "image/png" &&
-        file.type != "image/jpeg" &&
-        file.tyle != "image/gif"
-      ) {
+      if (file.type.indexOf("image") === -1) {
         open("请上传图片!", "warning");
         return false;
       } else if (file.size > 800000) {
