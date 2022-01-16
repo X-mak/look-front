@@ -1,17 +1,16 @@
 <template>
-  <div>教师后台</div>
   <el-button type="primary" size="default" @click="uploadClass"
     >上传课程</el-button
   >
   <!-- 上传界面 -->
-  <el-dialog
+  <!-- <el-dialog
     v-model="dialogVisible"
     title="上传视频"
-    width="30%"
+    width="40%"
     @closed="cancelClass"
     top="50px"
   >
-    <el-form label-width="120px" label-position="left">
+    <el-form label-width="120px" label-position="left" style="width:420px;margin:0 auto;">
       <el-form-item label="课程标题:">
         <el-input
           type="text"
@@ -28,7 +27,7 @@
           :before-upload="beforeAvatarUpload"
           :show-file-list="false"
           :multiple="false"
-          limit:1
+          :limit="1"
         >
           <img
             v-if="this.class.courseImg"
@@ -81,13 +80,17 @@
         <el-button type="primary" @click="confirmClass">提交</el-button>
       </span>
     </template>
-  </el-dialog>
+  </el-dialog> -->
+  <upload-course v-if="this.dialogVisible" @changeVisible="changeVisible" :userInfo="this.userInfo"></upload-course>
+
+
+
 </template>
 
 <script>
 import request from "../utils/request";
 import { ElMessage } from "element-plus";
-import { Plus } from "@element-plus/icons-vue";
+import UploadCourse from "../components/Teacher/UploadCourse.vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -99,13 +102,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      imageUrl: "",
-      videoUrl: "",
       userInfo: {},
-      class: {},
-      courseClass: {},
-      age: ["小学", "初中", "高中", "大学", "其他"],
-      subject: ["语文", "数学", "英语", "化学", "物理"],
     };
   },
   created() {
@@ -114,86 +111,15 @@ export default {
     });
   },
   components: {
-    Plus,
+    UploadCourse,
   },
   methods: {
     uploadClass() {
       this.dialogVisible = true;
     },
-    handleAvatarSuccess(res) {
-      //头像上传成功
-      if (res.code === "400") {
-        open(res.msg, "warning");
-      } else {
-        this.class.courseImg = res.data;
-        open(res.msg, "success");
-      }
-    },
-    beforeAvatarUpload(file) {
-      //图片上传前的检查
-      if (file.type.indexOf("image") === -1) {
-        open("请上传图片!", "warning");
-        return false;
-      } else if (file.size > 800000) {
-        open("上传的图片过大!", "warning");
-        return false;
-      }
-    },
-    handleVideoSuccess(res) {
-      //视频上传成功
-      if (res.code === "400") {
-        open(res.msg, "warning");
-      } else {
-        this.class.courseVideo = res.data;
-        open(res.msg, "success");
-      }
-    },
-    beforeVideoUpload(file) {
-      //视频上传前的检查
-      if (file.type.indexOf("video") === -1) {
-        open("请上传图片!", "warning");
-        return false;
-      } else if (file.size > 500000000) {
-        open("上传的图片过大!", "warning");
-        return false;
-      }
-    },
-    cancelClass() {
-      //取消提交
-      this.dialogVisible = false;
-    },
-    confirmClass() {
-      //确认提交
-      if (this.class.courseName === "" || this.class.courseName == null) {
-        open("课程名不能为空!", "warning");
-      } else if (
-        this.class.courseVideo === "" ||
-        this.class.courseVideo == null
-      ) {
-        open("课程视频不能为空!", "warning");
-      } else if (this.class.courseImg === "" || this.class.courseImg == null) {
-        open("课程封面不能为空!", "warning");
-      } else if (this.courseClass.age == null) {
-        open("课程分类不能为空!", "warning");
-      } else if (this.courseClass.subject == null) {
-        open("课程分类不能为空!", "warning");
-      } else {
-        this.class.courseClass = this.courseClass;
-        request({
-          url: "/course",
-          method: "post",
-          data: this.class,
-          params: { userAccount: this.userInfo.userAccount },
-        }).then((res) => {
-          if (res.code === "400") {
-            open(res.msg, "warning");
-          } else {
-            open(res.msg, "success");
-            this.dialogVisible = true;
-          }
-        });
-      }
-    },
+    changeVisible(v){
+      this.dialogVisible = v;
+    }
   },
 };
 </script>

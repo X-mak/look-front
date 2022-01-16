@@ -1,4 +1,4 @@
-<template style="display:flex;">
+<template>
   <el-form
     style="
       max-width: 50%;
@@ -9,7 +9,6 @@
     "
     label-width="200px"
     label-position="left"
-    :model="LoginUser"
   >
     <el-form-item label="用户头像:" size="default">
       <el-avatar :src="userInfo.userImg" @error="true">
@@ -27,7 +26,11 @@
       <el-input v-model="userInfo.coins" disabled type="text"></el-input>
     </el-form-item>
     <br />
-    <el-button type="primary" size="default" @click="signIn">签到</el-button>
+    <el-button type="primary" size="default" v-if="!this.signed" @click="signIn"
+      >签到</el-button
+    >
+    <el-button type="primary" size="default" v-else disabled>已签到</el-button>
+
     <el-button type="primary" size="default" @click="alterInfo"
       >修改当前信息</el-button
     >
@@ -38,75 +41,19 @@
       >修改密码</el-button
     >
   </el-form>
+  <!-- 修改头像 -->
+  <change-img v-if="this.dialogImgVisible"  @imgVisible="imgVisible" @load="infoLoad" :userInfo="this.userInfo"></change-img>
 
-  <!-- 修改头像的消息框 -->
-  <el-dialog
-    v-model="dialogImgVisible"
-    title="修改头像"
-    width="40%"
-    @closed="cancelImg"
-  >
-    <el-form label-width="200px" label-position="left" :model="LoginUser">
-      <el-form-item label="原头像:">
-        <el-avatar :src="userInfo.userImg" @error="true">
-          <img src="../../assets/img/NotFound.png" />
-        </el-avatar>
-      </el-form-item>
-      <el-form-item label="新头像:">
-        <el-upload
-          class="avatar-uploader"
-          accept="image/*"
-          action="http://localhost:8080/files/user-img"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-          :show-file-list="false"
-          :multiple="false"
-          limit="1"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
-        </el-upload>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="cancelImg">返回</el-button>
-        <el-button type="primary" @click="confirmImg">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
-
-  <!-- 修改密码的消息框 -->
-  <el-dialog
-    v-model="dialogPwdVisible"
-    title="修改密码"
-    width="40%"
-    @closed="cancelPwd"
-  >
-    <el-form label-width="200px" label-position="left" :model="LoginUser">
-      <el-form-item label="原密码:">
-        <el-input v-model="userPwd.old" type="text"></el-input>
-      </el-form-item>
-      <el-form-item label="新密码:">
-        <el-input v-model="userPwd.pwd" type="password"></el-input>
-      </el-form-item>
-      <el-form-item label="重复新密码:" size="default">
-        <el-input v-model="userPwd.rePwd" type="password"></el-input>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="cancelPwd">返回</el-button>
-        <el-button type="primary" @click="confirmPwd">确认</el-button>
-      </span>
-    </template>
-  </el-dialog>
+  <!-- 修改密码 -->
+  <change-pwd v-if="this.dialogPwdVisible" @pwdVisible="pwdVisible" :userInfo="this.userInfo"></change-pwd>
 </template>
 
 <script>
 import request from "../../utils/request";
 import { ElMessage } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
+import ChangePwd from "../../components/User/ChangePwd.vue";
+import ChangeImg from "../../components/User/ChangeImg.vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -117,16 +64,18 @@ const open = (msg, type) => {
 export default {
   components: {
     Plus,
+    ChangePwd,
+    ChangeImg,
   },
   data() {
     return {
       LoginUser: {},
       userInfo: {},
       cpUserInfo: {},
-      userPwd: {},
-      imageUrl: "",
       dialogImgVisible: false,
       dialogPwdVisible: false,
+      signed: false,
+      d:"",
     };
   },
   created() {
@@ -134,17 +83,45 @@ export default {
       this.LoginUser = this.$store.getters.getUser;
       this.userInfo = this.LoginUser.userInfo;
       this.cpUserInfo = JSON.parse(JSON.stringify(this.userInfo));
+
+      // 签到检查
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      if (month < 10) month = "0" + month;
+      var day = date.getDate();
+      if (day < 10) day = "0" + day;
+      this.d = year + "-" + month + "-" + day;
+      request({
+        url: "/manage/sign",
+        method: "get",
+        params: { userAccount: this.userInfo.userAccount, date: this.d },
+      }).then((res) => {
+        if (res.code === "400") this.signed = true;
+        else this.signed = false;
+      });
     });
   },
   methods: {
+    infoLoad(u){
+      this.LoginUser = u;
+      this.userInfo = u.userInfo;
+    },
     load() {
       request({
-        url: "/user/confirm",
+        url: "/manage/sign",
         method: "get",
+        params: { userAccount: this.userInfo.userAccount, date: this.d },
       }).then((res) => {
-        this.LoginUser = res.data;
-        this.userInfo = this.LoginUser.userInfo;
+        if (res.code === "400") this.signed = true;
+        else this.signed = false;
       });
+    },
+    pwdVisible(v){
+      this.dialogPwdVisible = v;
+    },
+    imgVisible(v){
+      this.dialogImgVisible = v;
     },
     signIn() {
       request({
@@ -183,83 +160,10 @@ export default {
     alterImg() {
       this.dialogImgVisible = true;
     },
-    cancelImg() {
-      this.dialogImgVisible = false;
-    },
-    confirmImg() {
-      if (this.imageUrl === "") {
-        open("请上传头像!", "warning");
-      } else {
-        let req = {
-          userAccount: this.userInfo.userAccount,
-          userImg: this.imageUrl,
-        };
-        request({
-          url: "/user/info",
-          method: "put",
-          data: req,
-        }).then((res) => {
-          if (res.code === "400") {
-            open(res.msg, "warning");
-          } else {
-            open(res.msg, "success");
-            this.dialogImgVisible = false;
-            this.imageUrl = "";
-            this.load();
-          }
-        });
-      }
-    },
-    alterPwd() {
+    alterPwd(){
       this.dialogPwdVisible = true;
     },
-    cancelPwd() {
-      this.userPwd = {};
-      this.dialogPwdVisible = false;
-    },
-    confirmPwd() {
-      if (this.userPwd.pwd != this.userPwd.rePwd) {
-        open("两次输入的密码不一致!", "warning");
-        this.userPwd.rePwd = "";
-      } else {
-        let account = {
-          userAccount: this.userInfo.userAccount,
-          userPassword: this.userPwd.old,
-        };
-        request({
-          url: "/user/pwd",
-          method: "put",
-          data: account,
-          params: { newPwd: this.userPwd.pwd },
-        }).then((res) => {
-          if (res.code === "400") {
-            open(res.msg, "warning");
-            this.userPwd = {};
-          } else {
-            open(res.msg, "success");
-            this.userPwd = {};
-            this.dialogPwdVisible = false;
-          }
-        });
-      }
-    },
-    handleAvatarSuccess(res) {
-      if (res.code === "400") {
-        open(res.msg, "warning");
-      } else {
-        this.imageUrl = res.data;
-        open(res.msg, "success");
-      }
-    },
-    beforeAvatarUpload(file) {
-      if (file.type.indexOf("image") === -1) {
-        open("请上传图片!", "warning");
-        return false;
-      } else if (file.size > 800000) {
-        open("上传的图片过大!", "warning");
-        return false;
-      }
-    },
+    
   },
 };
 </script>
