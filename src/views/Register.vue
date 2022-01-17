@@ -95,7 +95,7 @@ export default {
         {
           value: "4",
           label: "管理员",
-          disabled: true,
+          //disabled: true,
         },
       ],
     };

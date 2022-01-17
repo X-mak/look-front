@@ -42,10 +42,19 @@
     >
   </el-form>
   <!-- 修改头像 -->
-  <change-img v-if="this.dialogImgVisible"  @imgVisible="imgVisible" @load="infoLoad" :userInfo="this.userInfo"></change-img>
+  <change-img
+    v-if="this.dialogImgVisible"
+    @imgVisible="imgVisible"
+    @load="infoLoad"
+    :userInfo="this.userInfo"
+  ></change-img>
 
   <!-- 修改密码 -->
-  <change-pwd v-if="this.dialogPwdVisible" @pwdVisible="pwdVisible" :userInfo="this.userInfo"></change-pwd>
+  <change-pwd
+    v-if="this.dialogPwdVisible"
+    @pwdVisible="pwdVisible"
+    :userInfo="this.userInfo"
+  ></change-pwd>
 </template>
 
 <script>
@@ -75,7 +84,7 @@ export default {
       dialogImgVisible: false,
       dialogPwdVisible: false,
       signed: false,
-      d:"",
+      d: "",
     };
   },
   created() {
@@ -103,7 +112,7 @@ export default {
     });
   },
   methods: {
-    infoLoad(u){
+    infoLoad(u) {
       this.LoginUser = u;
       this.userInfo = u.userInfo;
     },
@@ -116,11 +125,19 @@ export default {
         if (res.code === "400") this.signed = true;
         else this.signed = false;
       });
+      request({
+        url: "/user/confirm",
+        method: "get",
+      }).then((res) => {
+        this.LoginUser = res.data;
+        this.userInfo = res.data.userInfo;
+        this.cpUserInfo = JSON.parse(JSON.stringify(this.userInfo));
+      });
     },
-    pwdVisible(v){
+    pwdVisible(v) {
       this.dialogPwdVisible = v;
     },
-    imgVisible(v){
+    imgVisible(v) {
       this.dialogImgVisible = v;
     },
     signIn() {
@@ -132,11 +149,15 @@ export default {
           open(res.msg, "warning");
         } else {
           open(res.msg, "success");
-          this.load();
+          setTimeout(() => {
+            this.load();
+          });
         }
       });
     },
     alterInfo() {
+      // console.log("cp=>" + this.cpUserInfo.userName);
+      // console.log("rl=>" + this.userInfo.userName);
       if (this.userInfo.userName === "") {
         open("用户昵称不能为空!", "warning");
         this.load();
@@ -150,9 +171,11 @@ export default {
         }).then((res) => {
           if (res.code === "400") {
             open(res.msg, "warning");
-            this.load();
           } else {
             open(res.msg, "success");
+            setTimeout(() => {
+              this.load();
+            });
           }
         });
       }
@@ -160,10 +183,9 @@ export default {
     alterImg() {
       this.dialogImgVisible = true;
     },
-    alterPwd(){
+    alterPwd() {
       this.dialogPwdVisible = true;
     },
-    
   },
 };
 </script>
