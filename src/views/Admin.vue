@@ -7,8 +7,14 @@
       margin: 20px auto;
     "
   >
-    <el-table :data="tableData" style="width: auto">
-      <el-table-column prop="id" label="课程编号" width="100" />
+    <el-table
+      :data="tableData"
+      style="width: auto"
+      stripe
+      border
+      :default-sort="{ prop: 'id' }"
+    >
+      <el-table-column prop="id" label="课程编号" width="140" sortable />
       <el-table-column prop="courseName" label="课程封面" width="250">
         <template #default="scope">
           <el-image
@@ -33,7 +39,7 @@
             <el-button type="text" size="default">下载课程</el-button>
           </el-link>
 
-          <el-button type="text" size="default" @click="update"
+          <el-button type="text" size="default" @click="update(scope.row)"
             >更新课程</el-button
           >
           <el-popconfirm
@@ -57,6 +63,11 @@
       @current-change="changePage"
     ></el-pagination>
   </div>
+  <update-course
+    v-if="this.visible"
+    @changeVisible="changeVisible"
+    :course="this.currentCourse"
+  ></update-course>
 </template>
 
 <script>
@@ -64,6 +75,7 @@ import axios from "axios";
 import { toRaw } from "vue";
 import request from "../utils/request";
 import { ElMessage } from "element-plus";
+import UpdateCourse from "../components/Admin/UpdateCourse.vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -77,7 +89,13 @@ export default {
       tableData: [],
       pageNum: 1,
       total: 0,
+      currentCourse: {},
+      visible: false,
+      statisData:[],
     };
+  },
+  components: {
+    UpdateCourse,
   },
   created() {
     setTimeout(() => {
@@ -92,14 +110,22 @@ export default {
         params: { status: "0" },
       }).then((res) => {
         this.tableData = res.data;
+        this.statisData = JSON.parse(JSON.stringify(res.data));
         this.total = parseInt(res.msg);
       });
+    },
+    changeVisible(v) {
+      this.visible = v;
+      this.tableData = JSON.parse(JSON.stringify(this.statisData));
     },
     changePage(page) {
       this.pageNum = page;
       this.load();
     },
-    update() {},
+    update(row) {
+      this.visible = true;
+      this.currentCourse = row;
+    },
     access(row) {
       row = toRaw(row);
       var course = {

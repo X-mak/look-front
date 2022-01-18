@@ -6,13 +6,15 @@ import request from '../utils/request'
 import store from '../store'
 
 import Login from '../views/Login.vue'
-import Index from '../views/Index.vue'
+import Index from '../views/Main/Index.vue'
 import Register from '../views/Register.vue'
 import Admin from '../views/Admin.vue'
 import Teacher from '../views/Teacher.vue'
 import User from '../views/User/User.vue'
 import UserInfo from "../views/User/UserInfo.vue"
 import UserCourse from "../views/User/UserCourse.vue"
+import Search from "../views/Main/Search.vue"
+import Main from "../views/Main/Main.vue"
 import {
     toRaw
 } from '@vue/reactivity'
@@ -20,6 +22,19 @@ const routes = [{
         path: "/",
         name: "index",
         component: Index,
+        redirect:"/main",
+        children:[
+            {
+                path : "search",
+                name : "search",
+                component : Search,
+            },
+            {
+                path : "main",
+                name : "main",
+                component : Main,
+            }
+        ]
     },
     {
         path: "/login",
@@ -35,6 +50,7 @@ const routes = [{
         path: '/user',
         name: 'user',
         component: User,
+        redirect: "/user/info",
         children: [{
                 path: "info",
                 name: "userInfo",
