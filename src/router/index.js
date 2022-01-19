@@ -18,21 +18,22 @@ import Main from "../views/Main/Main.vue"
 import {
     toRaw
 } from '@vue/reactivity'
+import Course from '../views/Course/Course.vue'
+import CourseVideo from '../views/Course/CourseVideo.vue'
 const routes = [{
         path: "/",
         name: "index",
         component: Index,
-        redirect:"/main",
-        children:[
-            {
-                path : "search",
-                name : "search",
-                component : Search,
+        redirect: "/main",
+        children: [{
+                path: "search",
+                name: "search",
+                component: Search,
             },
             {
-                path : "main",
-                name : "main",
-                component : Main,
+                path: "main",
+                name: "main",
+                component: Main,
             }
         ]
     },
@@ -72,6 +73,16 @@ const routes = [{
                 component: Admin
             }
         ]
+    },
+    {
+        path : "/course",
+        name : "course",
+        component : Course,
+    },
+    {
+        path : "/course/video",
+        name : "courseVideo",
+        component : CourseVideo,
     }
 ]
 
@@ -83,7 +94,7 @@ const router = createRouter({
 })
 
 
-const whiteUrls = ['/login', '/register', '/'];
+const whiteUrls = ['/login', '/register', '/main', '/search'];
 const teacherUrls = ['/teacher/manage'];
 //路由拦截器，权限控制
 router.beforeEach((to, from, next) => {

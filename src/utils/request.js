@@ -17,6 +17,9 @@ service.interceptors.request.use(
         config.headers['Content-Type'] = 'application/json;charset=utf-8';
         let token = sessionStorage.getItem("token");
         if (!whiteUrls.includes(config.url)) {  // 校验请求白名单
+            if(config.url.indexOf("/course/") != -1){
+                return config;
+            }
             if(token === null) {
                 router.push("/login")
             } else {

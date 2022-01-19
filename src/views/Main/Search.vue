@@ -13,19 +13,29 @@
       <el-radio-group
         v-model="age"
         v-for="ageTier in this.ageList"
-        size="normal"
+        size="default"
       >
-        <el-radio-button :label="ageTier" @change="searchByClass"></el-radio-button>
+        <el-radio-button
+          :label="ageTier"
+          @change="searchByClass"
+        ></el-radio-button>
       </el-radio-group>
+      <el-button type="text" size="default" @click="cleanAge">清空</el-button>
     </el-row>
     <el-row>
       <el-radio-group
         v-model="subject"
         v-for="subjectTier in this.subjectList"
-        size="normal"
+        size="default"
       >
-        <el-radio-button :label="subjectTier" @change="searchByClass"></el-radio-button>
+        <el-radio-button
+          :label="subjectTier"
+          @change="searchByClass"
+        ></el-radio-button>
       </el-radio-group>
+      <el-button type="text" size="default" @click="cleanSubject"
+        >清空</el-button
+      >
     </el-row>
     <el-space wrap>
       <el-card
@@ -71,7 +81,7 @@ export default {
       keyword: "",
       order: "",
       total: 0,
-      ageList: ["小学", "初中", "高中", "大学"],
+      ageList: ["小学", "初中", "高中", "大学", "其他"],
       subjectList: [
         "语文",
         "数学",
@@ -82,8 +92,8 @@ export default {
         "物理",
         "地理",
       ],
-      age:"",
-      subject:"",
+      age: "",
+      subject: "",
     };
   },
   created() {
@@ -101,6 +111,9 @@ export default {
         params: {
           keyword: this.keyword,
           order: this.order,
+          age: this.age,
+          subject: this.subject,
+          pageSize: 3,
         },
       }).then((res) => {
         this.courses = res.data;
@@ -119,12 +132,25 @@ export default {
       this.order = "click";
       this.load();
     },
-    join(course) {},
-    searchByClass(){
-        request({
-            
-        })
-    }
+    join(course) {
+      this.$router.push({
+        path: "/course",
+        query: {
+          id: course.id,
+        },
+      });
+    },
+    searchByClass() {
+      this.load();
+    },
+    cleanAge() {
+      this.age = "";
+      this.load();
+    },
+    cleanSubject() {
+      this.subject = "";
+      this.load();
+    },
   },
   watch: {
     $route(to, from) {

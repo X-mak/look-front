@@ -107,7 +107,7 @@ export default {
       request({
         url: "/course/status/" + this.pageNum,
         method: "get",
-        params: { status: "0" },
+        params: { status: "0" ,pageSize:3},
       }).then((res) => {
         this.tableData = res.data;
         this.statisData = JSON.parse(JSON.stringify(res.data));

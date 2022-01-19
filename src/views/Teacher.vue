@@ -1,90 +1,65 @@
 <template>
-  <el-button type="primary" size="default" @click="uploadClass"
-    >上传课程</el-button
+  <upload-course
+    v-if="this.dialogVisible"
+    @changeVisible="changeVisible"
+    :userInfo="this.userInfo"
+  ></upload-course>
+  <div
+    style="
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px auto;
+    "
   >
-  <!-- 上传界面 -->
-  <!-- <el-dialog
-    v-model="dialogVisible"
-    title="上传视频"
-    width="40%"
-    @closed="cancelClass"
-    top="50px"
-  >
-    <el-form label-width="120px" label-position="left" style="width:420px;margin:0 auto;">
-      <el-form-item label="课程标题:">
-        <el-input
-          type="text"
-          style="width: 200px"
-          v-model="this.class.courseName"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="课程封面:">
-        <el-upload
-          class="avatar-uploader"
-          action="http://localhost:8080/files/video-img"
-          accept="image/*"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-          :show-file-list="false"
-          :multiple="false"
-          :limit="1"
-        >
-          <img
-            v-if="this.class.courseImg"
-            :src="this.class.courseImg"
-            class="avatar"
-          />
-          <el-icon v-else class="avatar-uploader-icon"><plus /></el-icon>
-        </el-upload>
-      </el-form-item>
-      <el-form-item label="课程视频" size="default">
-        <el-upload
-          class="upload-demo"
-          action="http://localhost:8080/files/video"
-          accept="video/*"
-          :multiple="false"
-          :limit="1"
-          :on-success="handleVideoSuccess"
-          :before-upload="beforeVideoUpload"
-        >
-          <el-button type="primary">点此选择视频文件</el-button>
-          <template #tip>
-            <div class="el-upload__tip">视频文件不能大于500MB!</div>
+    <el-button
+      type="primary"
+      size="default"
+      @click="uploadClass"
+      style="align-self: flex-start"
+      >上传课程</el-button
+    >
+
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 20px auto;
+      "
+    >
+      <el-table :data="tableData" style="width: auto" stripe border>
+        <el-table-column prop="id" label="课程编号" width="140" sortable />
+        <el-table-column prop="courseName" label="课程封面" width="250">
+          <template #default="scope">
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="scope.row.courseImg"
+              fit="contain"
+              :preview-src-list="[scope.row.courseImg]"
+              :initial-index="1"
+            ></el-image>
           </template>
-        </el-upload>
-      </el-form-item>
-      <el-form-item label="课程受众" size="default">
-        <el-select
-          v-model="this.courseClass.age"
-          class="m-2"
-          placeholder="课程受众"
-        >
-          <el-option v-for="item in this.age" :label="item" :value="item">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="课程类型" size="default">
-        <el-select
-          v-model="this.courseClass.subject"
-          class="m-2"
-          placeholder="课程类型"
-        >
-          <el-option v-for="item in this.subject" :label="item" :value="item">
-          </el-option>
-        </el-select>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="cancelClass">返回</el-button>
-        <el-button type="primary" @click="confirmClass">提交</el-button>
-      </span>
-    </template>
-  </el-dialog> -->
-  <upload-course v-if="this.dialogVisible" @changeVisible="changeVisible" :userInfo="this.userInfo"></upload-course>
-
-
-
+        </el-table-column>
+        <el-table-column prop="courseName" label="课程标题" width="250" />
+        <el-table-column label="状态" width="300">
+          <template #default="scope" >
+            <el-button type="success" round v-if="scope.row.status === 1" style="margin:0 35%"
+              >已发布</el-button
+            >
+            <el-button type="warning" round v-else style="margin:0 35%">审核中</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        layout="prev, pager, next"
+        :total="total"
+        :page-size="3"
+        :pager-count="7"
+        @current-change="changePage"
+      ></el-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -103,24 +78,45 @@ export default {
     return {
       dialogVisible: false,
       userInfo: {},
+      tableData: [],
+      pageNum: 1,
+      total: 0,
     };
   },
   created() {
     setTimeout(() => {
       this.userInfo = this.$store.getters.getUser.userInfo;
+      this.load();
     });
   },
   components: {
     UploadCourse,
   },
   methods: {
+    load() {
+      request({
+        url:
+          "/course/publish/" + this.userInfo.userAccount + "/" + this.pageNum,
+        method: "get",
+        params: { status: "",pageSize:3 },
+      }).then((res) => {
+        console.log(res.data);
+        this.tableData = res.data;
+        this.total = parseInt(res.msg);
+      });
+    },
     uploadClass() {
       this.dialogVisible = true;
     },
-    changeVisible(v){
+    changeVisible(v) {
       this.dialogVisible = v;
-    }
+    },
+    changePage(page) {
+      this.pageNum = page;
+      this.load();
+    },
   },
+  computed: {},
 };
 </script>
 
