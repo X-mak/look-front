@@ -1,49 +1,68 @@
 <template>
   <div style="display: flex; flex-direction: column">
-    <div>搜索页面</div>
-    <el-row>
-      <el-button type="text" size="default" @click="timeOrder"
-        >按时间排序</el-button
-      >
-      <el-button type="text" size="default" @click="hotOrder"
-        >按热度排序</el-button
-      ></el-row
-    >
-    <el-row>
-      <el-radio-group
-        v-model="age"
-        v-for="ageTier in this.ageList"
-        size="default"
-      >
-        <el-radio-button
-          :label="ageTier"
-          @change="searchByClass"
-        ></el-radio-button>
-      </el-radio-group>
-      <el-button type="text" size="default" @click="cleanAge">清空</el-button>
-    </el-row>
-    <el-row>
-      <el-radio-group
-        v-model="subject"
-        v-for="subjectTier in this.subjectList"
-        size="default"
-      >
-        <el-radio-button
-          :label="subjectTier"
-          @change="searchByClass"
-        ></el-radio-button>
-      </el-radio-group>
-      <el-button type="text" size="default" @click="cleanSubject"
-        >清空</el-button
-      >
-    </el-row>
+    <div style="margin: 0 auto; width: 1200px">
+      <el-row style="margin: 0 auto; width: 600px">
+        <div style="display: flex; align-items: center">
+          <el-icon :size="16"><clock /></el-icon>
+          <el-button type="text" size="default" @click="timeOrder"
+            >最新发布</el-button
+          >
+        </div>
+        <div style="display: flex; align-items: center;margin-left:40px;">
+          <el-icon :size="16"><hot-water></hot-water></el-icon>
+          <el-button type="text" size="default" @click="hotOrder"
+            >热度最高</el-button
+          >
+        </div>
+      </el-row>
+      <el-row style="margin: 0 auto; width: 600px">
+        <el-radio-group
+          v-model="age"
+          v-for="ageTier in this.ageList"
+          size="default"
+        >
+          <el-radio-button
+            :label="ageTier"
+            @change="searchByClass"
+          ></el-radio-button>
+        </el-radio-group>
+        <el-button
+          type="text"
+          size="default"
+          @click="cleanAge"
+          style="margin-left: 10px"
+          >清空</el-button
+        >
+      </el-row>
+      <el-row style="margin: 0 auto; width: 600px">
+        <el-radio-group
+          v-model="subject"
+          v-for="subjectTier in this.subjectList"
+          size="default"
+        >
+          <el-radio-button
+            :label="subjectTier"
+            @change="searchByClass"
+          ></el-radio-button>
+        </el-radio-group>
+        <el-button
+          type="text"
+          size="default"
+          @click="cleanSubject"
+          style="margin-left: 10px"
+          >清空</el-button
+        >
+      </el-row>
+      <hr style="margin-top: 10px" />
+    </div>
+
     <el-space wrap>
       <el-card
         v-for="course in courses"
         style="
           width: 250px;
           height: 250px;
-          margin: 20px 30px;
+          margin: 30px 25px;
           display: flex;
           justify-content: center;
         "
@@ -72,8 +91,11 @@
 
 <script>
 import request from "../../utils/request";
+import { Clock,HotWater } from "@element-plus/icons-vue";
+
 export default {
   name: "",
+  components: { Clock ,HotWater},
   data() {
     return {
       pageNum: 1,
@@ -164,8 +186,12 @@ export default {
 </script>
 
 <style scoped>
+.el-card p {
+  color: rgba(59, 59, 59, 0.8);
+  margin-top: 12%;
+}
 .el-card :hover p {
-  color: aqua;
+  color: rgb(148, 223, 241, 0.8);
 }
 .el-card {
   cursor: pointer;

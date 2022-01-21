@@ -18,7 +18,7 @@
       <el-input v-model="form.pwd" type="password" @keyup.enter.native="login"></el-input>
     </el-form-item>
     <el-button type="primary" size="default" @click="login">登录</el-button>
-    <el-row>
+    <el-row style="display:flex;align-items:center">
       <p>没有账号?点此</p>
       <el-button type="text" size="default" @click="goRegister">注册</el-button>
     </el-row>

@@ -1,7 +1,20 @@
 <template>
   <index-header></index-header>
-  {{ this.course.courseName }}
-  <div class="demo">
+
+
+    <el-card>
+  <p style="text-align: center; font-size: 30px;">
+    {{ this.course.courseName }}
+  </p>
+    <!-- card body -->
+    <div style="display: flex; align-items: center;justify-content:center">
+      <el-avatar :src="this.publisher.userImg"></el-avatar>
+      <span style="font-size: 20px; margin: 0 30px">{{
+        this.publisher.userName
+      }}</span>
+    </div>
+  </el-card>
+  <div class="demo" style="margin: 0 auto; width: 800px">
     <video-play v-bind="this.options" ref="videoPlayer"></video-play>
   </div>
 </template>
@@ -26,20 +39,17 @@ export default {
         width: "800px", //播放器高度
         height: "450px", //播放器高度
         color: "#409eff", //主题色
-        title: "", //视频名称
+        title: "j", //视频名称
         src: "", //视频源
-        muted: false, //静音
+        muted: true, //静音
         webFullScreen: false,
         speedRate: ["0.75", "1.0", "1.25", "1.5", "2.0"], //播放倍速
-        autoPlay: false, //自动播放
         loop: false, //循环播放
         mirror: false, //镜像画面
         ligthOff: false, //关灯模式
         volume: 0.3, //默认音量大小
         control: true, //是否显示控制器
         poster: "",
-        preload: 'auto',
-        aspectRatio: '16:9',
       },
     };
   },
@@ -49,7 +59,6 @@ export default {
       this.LoginUser = this.$store.getters.getUser;
       this.userInfo = this.LoginUser.userInfo;
       this.load();
-      this.$refs.videoPlayer.player.pause();
     });
   },
   methods: {
