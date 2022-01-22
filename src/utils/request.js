@@ -9,13 +9,23 @@ const service = axios.create({
     // headers:{'Content-Type':'application/x-www-form-urlencoded'}// 'multipart/form-data'   //  'application/x-www-form-urlencoded';
 });
 
+const whiteUrls = ["/user/check", '/user'];
+
+
 service.interceptors.request.use(
     config => {
-        // console.log('config.method---:   ' + config.method);
-        console.log('config.url---:   ' + config.url)
-        console.log('config.data---:   ' + config.data);
-        // console.log('config.params---:   ' + config.params);
-        debugger
+        config.headers['Content-Type'] = 'application/json;charset=utf-8';
+        let token = sessionStorage.getItem("token");
+        if (!whiteUrls.includes(config.url)) {  // 校验请求白名单
+            if(config.url.indexOf("/course/") != -1){
+                return config;
+            }
+            if(token === null) {
+                router.push("/login")
+            } else {
+                config.headers['token'] = token;  // 设置请求头
+            }
+        }
         return config;
     },
     error => {
@@ -27,8 +37,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         if (response.status === 200) {
-            // console.log('response.data---:   ' + response.data.status)
-            return response.data;
+            let res = response.data;
+            if (res.code === '401') {
+                console.error("token过期，重新登录")
+                router.push("/login")
+            }
+            return res;    
         } else {
             Promise.reject();
         }

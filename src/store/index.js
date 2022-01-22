@@ -3,15 +3,15 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     user: {},
-    api:"http://localhost:8080"
   },
   mutations: {
-
+    SET_USER(state, user) {
+      state.user = user
+    }
   },
   actions: {
-
   },
   getters: {
-    
+    getUser: (state) => state.user
   }
 })
