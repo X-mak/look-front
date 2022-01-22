@@ -4,7 +4,7 @@
       <el-row style="margin: 0 auto; width: 600px">
         <div style="display: flex; align-items: center">
           <el-icon :size="16"><clock /></el-icon>
-          <el-button type="text" size="default" @click="timeOrder"
+          <el-button type="text" size="default" @click="timeOrder" 
             >最新发布</el-button
           >
         </div>

@@ -1,13 +1,12 @@
 <template>
   <index-header></index-header>
 
-
-    <el-card>
-  <p style="text-align: center; font-size: 30px;">
-    {{ this.course.courseName }}
-  </p>
+  <el-card>
+    <p style="text-align: center; font-size: 30px">
+      {{ this.course.courseName }}
+    </p>
     <!-- card body -->
-    <div style="display: flex; align-items: center;justify-content:center">
+    <div style="display: flex; align-items: center; justify-content: center">
       <el-avatar :src="this.publisher.userImg"></el-avatar>
       <span style="font-size: 20px; margin: 0 30px">{{
         this.publisher.userName
@@ -15,7 +14,11 @@
     </div>
   </el-card>
   <div class="demo" style="margin: 0 auto; width: 800px">
-    <video-play v-bind="this.options" ref="videoPlayer"></video-play>
+    <video-play
+      v-if="haveGot"
+      v-bind="this.options"
+      ref="videoPlayer"
+    ></video-play>
   </div>
 </template>
 
@@ -35,6 +38,7 @@ export default {
       LoginUser: {},
       userInfo: {},
       publisher: {},
+      haveGot: false,
       options: {
         width: "800px", //播放器高度
         height: "450px", //播放器高度
@@ -49,6 +53,7 @@ export default {
         ligthOff: false, //关灯模式
         volume: 0.3, //默认音量大小
         control: true, //是否显示控制器
+        preload: "auto",
         poster: "",
       },
     };
@@ -72,6 +77,7 @@ export default {
         this.options.src = res.data.courseVideo;
         this.options.title = res.data.courseName;
         this.options.poster = res.data.courseImg;
+        this.haveGot = true;
       });
       request({
         url: "/manage/course/" + this.courseId,

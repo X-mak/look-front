@@ -8,7 +8,17 @@
       justify-content: space-between;
     "
   >
-    <p @click="goMain">首页</p>
+    <div @click="goMain" class="logo">
+      <el-row style="
+      flex-direction: row;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    ">
+        <img src="../../assets/img/look_logo.jpg" alt="" style="width: 60px"/>
+      </el-row>
+    </div>
+
     <el-icon :size="20"><search /></el-icon>
 
     <el-form
@@ -72,7 +82,9 @@ export default {
   },
   components: { Search, Coin },
   mounted() {
-    setTimeout(() => {this.load();});
+    setTimeout(() => {
+      this.load();
+    });
   },
   methods: {
     load() {
@@ -81,9 +93,12 @@ export default {
         this.userInfo = this.LoginUser.userInfo;
         this.UserImg = this.userInfo.userImg;
       }
-      if(sessionStorage.getItem("token") === "" || sessionStorage.getItem("token") == null){
+      if (
+        sessionStorage.getItem("token") === "" ||
+        sessionStorage.getItem("token") == null
+      ) {
         this.logined = false;
-      }else{
+      } else {
         this.logined = true;
       }
     },
@@ -104,16 +119,17 @@ export default {
     logOut() {
       sessionStorage.setItem("token", "");
       this.load();
+      this.UserImg="";
     },
-    goMain(){
-      this.$router.push("/main")
-    }
+    goMain() {
+      this.$router.push("/main");
+    },
   },
 };
 </script>
 
 <style>
-p{
+.logo {
   cursor: pointer;
 }
 </style>
