@@ -1,47 +1,57 @@
 <template>
   <el-header
     height="60px"
-    style="
-      flex-direction: row;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    "
+    style="flex-direction: row; display: flex; align-items: center"
   >
     <div @click="goMain" class="logo">
-      <el-row style="
-      flex-direction: row;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    ">
-        <img src="../../assets/img/look_logo.jpg" alt="" style="width: 60px"/>
+      <el-row>
+        <img src="../../assets/img/look_logo.jpg" alt="" style="width: 60px" />
       </el-row>
     </div>
-
-    <el-icon :size="20"><search /></el-icon>
-
-    <el-form
-      ref="form"
-      label-width="180px"
-      :inline="true"
-      size="normal"
-      @submit.native.prevent
-      style="margin-top: 1.5%; margin-left: -34%"
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        margin-top: 2%;
+        margin-left: 35%;
+      "
     >
-      <el-form-item>
-        <el-input
-          type="text"
-          v-model="this.search"
-          @keyup.enter="searchCourse"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="searchCourse">搜索</el-button>
-      </el-form-item>
-    </el-form>
+      <el-form
+        ref="form"
+        label-width="180px"
+        :inline="true"
+        size="normal"
+        @submit.native.prevent
+      >
+        <el-form-item>
+          <el-input
+            type="text"
+            v-model="this.search"
+            @keyup.enter="searchCourse"
+          >
+            <template #prefix>
+              <el-icon :size="20" style="margin-top: 30%"><search /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="searchCourse">搜索</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
-    <el-dropdown>
+    <el-dropdown style="margin-left: 30%">
+      <span class="el-dropdown-link"> 观看记录 </span>
+      <template #dropdown>
+        <el-scrollbar max-height="400px">
+          <p v-for="item in history" :key="item" class="scrollbar-demo-item">
+            {{ item }}
+          </p>
+        </el-scrollbar>
+      </template>
+    </el-dropdown>
+
+    <el-dropdown style="margin-left: 5%">
       <span class="el-dropdown-link">
         <el-avatar size="small" :src="UserImg"></el-avatar>
       </span>
@@ -78,6 +88,7 @@ export default {
       UserImg: "",
       userInfo: "",
       logined: false,
+      history: [],
     };
   },
   components: { Search, Coin },
@@ -101,6 +112,8 @@ export default {
       } else {
         this.logined = true;
       }
+      if (this.logined) {
+      }
     },
     goLogin() {
       this.$router.push("/login");
@@ -119,7 +132,7 @@ export default {
     logOut() {
       sessionStorage.setItem("token", "");
       this.load();
-      this.UserImg="";
+      this.UserImg = "";
     },
     goMain() {
       this.$router.push("/main");

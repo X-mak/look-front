@@ -20,6 +20,7 @@ import {
 } from '@vue/reactivity'
 import Course from '../views/Course/Course.vue'
 import CourseVideo from '../views/Course/CourseVideo.vue'
+import UserPage from '../views/User/UserPage.vue'
 const routes = [{
         path: "/",
         name: "index",
@@ -75,14 +76,19 @@ const routes = [{
         ]
     },
     {
-        path : "/course",
-        name : "course",
-        component : Course,
+        path: "/course",
+        name: "course",
+        component: Course,
     },
     {
-        path : "/course/video",
-        name : "courseVideo",
-        component : CourseVideo,
+        path: "/course/video",
+        name: "courseVideo",
+        component: CourseVideo,
+    },
+    {
+        path : "/userPage/:account",
+        name : "user-page",
+        component: UserPage,
     }
 ]
 

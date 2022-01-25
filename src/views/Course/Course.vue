@@ -21,7 +21,7 @@
       >
         <p style="font-size: 40px;">课程名: {{ this.course.courseName }}</p>
         <p style="font-size: 20px">发布人:</p>
-        <el-card>
+        <el-card @click="watchUser" class="publisher">
           <!-- card body -->
           <div style="display: flex; align-items: center">
             <el-avatar :src="this.publisher.userImg"></el-avatar>
@@ -47,6 +47,7 @@
       </div>
     </div>
   </el-card>
+  <comments-part/>
 </template>
 
 <script>
@@ -54,7 +55,7 @@ import IndexHeader from "../../components/IndexPart/IndexHeader.vue";
 import request from "../../utils/request";
 import { ElMessage } from "element-plus";
 import { Coin } from "@element-plus/icons-vue";
-
+import CommentsPart from "../../components/Course/CommentsPart.vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -64,7 +65,7 @@ const open = (msg, type) => {
 };
 export default {
   name: "",
-  components: { IndexHeader, Coin },
+  components: { IndexHeader, Coin,CommentsPart },
   data() {
     return {
       courseId: 0,
@@ -125,6 +126,9 @@ export default {
         },
       });
     },
+    watchUser(){
+      this.$router.push("/userPage/"+this.publisher.userAccount);
+    }
   },
 };
 </script>
@@ -132,5 +136,9 @@ export default {
 <style scoped>
 p{
   margin:20px 0;
+}
+.publisher :hover{
+  color: rgb(148, 223, 241, 0.8);
+  cursor: pointer;
 }
 </style>
