@@ -40,18 +40,31 @@
       </el-form>
     </div>
 
-    <el-dropdown style="margin-left: 30%">
+    <el-dropdown style="margin-left: 30%" v-if="logined">
       <span class="el-dropdown-link"> 观看记录 </span>
       <template #dropdown>
-        <el-scrollbar max-height="400px">
-          <p v-for="item in history" :key="item" class="scrollbar-demo-item">
-            {{ item }}
-          </p>
-        </el-scrollbar>
+        <el-dropdown-menu>
+          <el-scrollbar max-height="400px">
+            <div v-for="item in history" :key="item">
+              <el-card
+                class="record-card"
+                style="width: 200px"
+                @click="join(item)"
+              >
+                <div style="display: flex; align-items: center">
+                  <el-avatar :size="50" :src="item.courseImg"></el-avatar>
+                  <span style="font-size: large; margin-left: 20%">{{
+                    item.courseName
+                  }}</span>
+                </div>
+              </el-card>
+            </div>
+          </el-scrollbar>
+        </el-dropdown-menu>
       </template>
     </el-dropdown>
 
-    <el-dropdown style="margin-left: 5%">
+    <el-dropdown style="position: absolute; right: 2%">
       <span class="el-dropdown-link">
         <el-avatar size="small" :src="UserImg"></el-avatar>
       </span>
@@ -80,6 +93,7 @@
 
 <script>
 import { Search, Coin } from "@element-plus/icons-vue";
+import request from "../../utils/request";
 export default {
   data() {
     return {
@@ -113,6 +127,13 @@ export default {
         this.logined = true;
       }
       if (this.logined) {
+        request({
+          url: "/course/history/1",
+          method: "get",
+          params: { userAccount: this.userInfo.userAccount, pageSize: 30 },
+        }).then((res) => {
+          this.history = res.data;
+        });
       }
     },
     goLogin() {
@@ -137,6 +158,14 @@ export default {
     goMain() {
       this.$router.push("/main");
     },
+    join(item) {
+      this.$router.push({
+        path: "/course/video",
+        query: {
+          id: item.id,
+        },
+      });
+    },
   },
 };
 </script>
@@ -144,5 +173,11 @@ export default {
 <style>
 .logo {
   cursor: pointer;
+}
+.record-card {
+  cursor: pointer;
+}
+.record-card :hover span {
+  color: rgb(148, 223, 241, 0.8);
 }
 </style>

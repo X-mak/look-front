@@ -38,16 +38,16 @@
           <el-icon :size="30" style=""><coin /></el-icon>
         </el-row>
 
-        <el-button type="primary" size="default" v-if="!valid" @click="buy"
+        <el-button type="primary" size="default" v-if="valid==-1" @click="buy"
           >购买课程</el-button
         >
-        <el-button type="primary" size="default" v-else @click="enterClass"
+        <el-button type="primary" size="default" v-if="valid==1" @click="enterClass"
           >进入课程</el-button
         >
       </div>
     </div>
   </el-card>
-  <comments-part/>
+  <comments-part  :comment="this.comment" v-if="valid!=0" />
 </template>
 
 <script>
@@ -71,9 +71,10 @@ export default {
       courseId: 0,
       course: {},
       userInfo: {},
-      valid: false,
+      valid: 0,
       publisher: {},
       LoginUser: {},
+      comment:[],
     };
   },
   created() {
@@ -98,10 +99,11 @@ export default {
         method: "get",
         params: { userAccount: this.userInfo.userAccount },
       }).then((res) => {
-        if (res.code === "400") this.valid = false;
+        if (res.code === "400") this.valid = -1
         else {
-          this.valid = true;
+          this.valid = 1;
         }
+        this.comment.push(this.courseId,this.valid);
       });
     },
     buy() {

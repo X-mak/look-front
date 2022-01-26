@@ -4,9 +4,9 @@
       <el-card
         v-for="course in courses"
         style="
-          width: 250px;
-          height: 250px;
-          margin: 30px 25px;
+          width: 220px;
+          height: 240px;
+          margin: 30px 23px;
           display: flex;
           justify-content: center;
         "

@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; flex-direction: column">
+  <div style="display: flex; flex-direction: column; width: 180vh;margin:10px auto;">
     <div style="margin: 0 auto; width: 1200px">
       <el-row style="margin: 0 auto; width: 600px">
         <div style="display: flex; align-items: center">
@@ -55,12 +55,12 @@
       </el-row>
       <hr style="margin-top: 10px" />
     </div>
+    <course-list
+      :courses="this.courses"
+      @changePage="changePage"
+      :total="this.total"
+    ></course-list>
   </div>
-  <course-list
-    :courses="this.courses"
-    @changePage="changePage"
-    :total="this.total"
-  ></course-list>
 </template>
 
 <script>
@@ -151,5 +151,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

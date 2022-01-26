@@ -18,6 +18,7 @@
       v-if="haveGot"
       v-bind="this.options"
       ref="videoPlayer"
+      @play="startWatching"
     ></video-play>
   </div>
 </template>
@@ -87,6 +88,13 @@ export default {
         if (res.code === "400") this.valid = false;
         else this.valid = true;
       });
+    },
+    startWatching(){
+      request({
+        url:"/course/history",
+        method:"post",
+        params:{id:this.courseId,userAccount:this.userInfo.userAccount}
+      })
     },
   },
 };

@@ -1,12 +1,38 @@
 <template>
   <IndexHeader></IndexHeader>
-  <div>{{ this.watchingUser }}</div>
+  <div
+    style="
+      width: 180vh;
+      margin: 0 auto;
+      background-color: rgb(157, 218, 149, 0.6);
+    "
+  >
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header" style="display: flex; align-items: center">
+          <el-avatar :size="50" :src="this.watchingUser.userImg"></el-avatar>
+          <div style="margin-left: 2%;display:flex;flex-direction:column">
+            <span style="font-size: large;">{{
+              this.watchingUser.userName
+            }}</span>
+            <span style="font-size: small;">粉丝数:{{this.watchingUser.fans}}</span>
+          </div>
 
-  <course-list
-    :courses="this.courses"
-    @changePage="changePage"
-    :total="this.total"
-  ></course-list>
+          <el-button class="button" type="primary" style="margin-left: 2%"
+            >关注</el-button
+          >
+        </div>
+      </template>
+      <div>
+        <span>TA的课程</span>
+      </div>
+    </el-card>
+    <course-list
+      :courses="this.courses"
+      @changePage="changePage"
+      :total="this.total"
+    ></course-list>
+  </div>
 </template>
 
 <script>
