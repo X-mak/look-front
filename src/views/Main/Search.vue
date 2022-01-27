@@ -34,7 +34,7 @@
           >清空</el-button
         >
       </el-row>
-      <el-row style="margin: 0 auto; width: 600px">
+      <el-row style="margin: 5px auto; width: 600px">
         <el-radio-group
           v-model="subject"
           v-for="subjectTier in this.subjectList"
@@ -50,6 +50,7 @@
           size="default"
           @click="cleanSubject"
           style="margin-left: 10px"
+          v-if="this.subjectList.length!=0"
           >清空</el-button
         >
       </el-row>
@@ -77,26 +78,17 @@ export default {
       keyword: "",
       order: "",
       total: 0,
-      ageList: ["小学", "初中", "高中", "大学", "其他"],
-      subjectList: [
-        "语文",
-        "数学",
-        "英语",
-        "化学",
-        "历史",
-        "政治",
-        "物理",
-        "地理",
-      ],
+      ageList: ["兴趣爱好", "职业技能"],
+      subjectList:[],
+      hobbyList: ["音乐","游戏","棋类","运动","美术"],
+      skillList:["管理","计算机","会计","数学","职业意见"],
       age: "",
       subject: "",
     };
   },
   created() {
     this.keyword = this.$route.query.keyword;
-    setTimeout(() => {
-      this.load();
-    });
+    this.load();
   },
   methods: {
     load() {
@@ -127,7 +119,12 @@ export default {
       this.order = "click";
       this.load();
     },
-    searchByClass() {
+    searchByClass(name) {
+      if(name.target.value == "职业技能"){
+        this.subjectList = this.skillList;
+      }else if(name.target.value == "兴趣爱好"){
+        this.subjectList = this.hobbyList;
+      }
       this.load();
     },
     cleanAge() {
@@ -137,14 +134,6 @@ export default {
     cleanSubject() {
       this.subject = "";
       this.load();
-    },
-  },
-  watch: {
-    $route(to, from) {
-      if (to.query.keyword != from.query.keyword) {
-        this.keyword = to.query.keyword;
-        this.load();
-      }
     },
   },
 };

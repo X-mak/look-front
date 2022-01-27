@@ -23,19 +23,38 @@
       >
         <el-avatar :size="50" :src="this.userInfo.userImg"></el-avatar>
         <div class="demo-rate-block">
-          <span style="color: rgb(121, 120, 120, 0.8); font-size: 16px"
-            >为本节课评分吧</span
+          <div
+            v-if="!this.ranked"
+            style="display: flex; flex-direction: column; align-items: center"
           >
-          <el-rate v-model="rank" :colors="colors" v-if="!ranked"> </el-rate>
-          <el-rate v-model="rank" :colors="colors" disabled v-else> </el-rate>
+            <span style="color: rgb(121, 120, 120, 0.8); font-size: 16px"
+              >为本节课评分吧</span
+            >
+            <el-rate
+              v-model="this.myComment.star"
+              :colors="colors"
+              v-if="!ranked"
+            >
+            </el-rate>
+          </div>
+          <div
+            v-else
+            style="display: flex; flex-direction: column; align-items: center"
+          >
+            <span style="color: rgb(121, 120, 120, 0.8); font-size: 16px"
+              >感谢您对课程的评分</span
+            >
+            <el-rate v-model="this.myComment.star" :colors="colors" disabled>
+            </el-rate>
+          </div>
         </div>
       </div>
 
       <el-input
-        v-model="this.myComment.content"
+        v-model="this.myComment.context"
         :rows="2"
         type="textarea"
-        placeholder="Please input"
+        placeholder="请写下您对此课程的评价吧!"
         :autosize="{ minRows: 3, maxRows: 4 }"
         style="width: 700px"
       />
@@ -48,7 +67,7 @@
       >
     </div>
     <hr style="color: rgba(184, 184, 184, 0.3)" v-if="valid == 1" />
-    <div style="width: 160vh; margin: 40px auto" v-for="item in allComments">
+    <div style="width: 150vh; margin: 40px auto" v-for="item in allComments">
       <el-card class="box-card">
         <template #header>
           <div class="card-header" style="display: flex; align-items: center">
@@ -68,14 +87,14 @@
         </div>
       </el-card>
     </div>
-    <div style="display:flex">
+    <div style="display: flex">
       <el-pagination
         layout="prev, pager, next"
         :total="total"
         :page-size="3"
         :pager-count="7"
         @current-change="changePage"
-        style="margin:10px auto;"
+        style="margin: 10px auto"
       ></el-pagination>
     </div>
   </div>
@@ -83,6 +102,14 @@
 
 <script>
 import request from "../../utils/request";
+import { ElMessage } from "element-plus";
+const open = (msg, type) => {
+  ElMessage({
+    showClose: true,
+    message: msg,
+    type: type,
+  });
+};
 export default {
   props: ["comment"],
   name: "",
@@ -99,7 +126,7 @@ export default {
       myComment: {},
       allComments: [],
       pageNum: 1,
-      total:0
+      total: 0,
     };
   },
   created() {
@@ -124,7 +151,7 @@ export default {
       }).then((res) => {
         if (res.code === "200") {
           this.ranked = true;
-          this.rank = res.data;
+          this.myComment.star = res.data;
         }
       });
     },
@@ -145,13 +172,38 @@ export default {
     },
     hotOrder() {
       this.order = "hot";
+      this.pageLoad();
     },
     dateOrder() {
       this.order = "date";
+      this.pageLoad();
     },
-    submitComment() {},
-    changePage(page){
+    submitComment() {
+      if (this.myComment.context == null || this.myComment.context == "") {
+        open("请填写评论内容!", "warning");
+      } else if (this.myComment.star == 0) {
+        open("请为这个课程评分!", "warning");
+      } else {
+        this.myComment.userAccount = this.userInfo.userAccount;
+        this.myComment.courseId = this.courseId;
+        request({
+          url: "/course/comments",
+          method: "post",
+          data: this.myComment,
+        }).then((res)=>{
+          if(res.code == "400"){
+            open(res.msg,"warning");
+          }else{
+            open(res.msg,"success");
+          }
+          this.pageLoad();
+          this.myComment.context = "";
+        })
+      }
+    },
+    changePage(page) {
       this.pageNum = page;
+      this.pageLoad();
     },
   },
 };

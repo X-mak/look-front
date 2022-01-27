@@ -14,7 +14,7 @@
       >
         <div class="single-course">
           <el-image
-            style="width: 150px; height: 150px"
+            style="width: 150px; height: 150px;border-radius:14px;"
             :src="course.courseImg"
             fit="contain"
           ></el-image>

@@ -3,23 +3,39 @@
   <div
     style="
       width: 180vh;
-      margin: 0 auto;
-      background-color: rgb(157, 218, 149, 0.6);
+      margin: 2% auto;
+      background-color: rgba(211, 211, 211, 0.6);
     "
   >
     <el-card class="box-card">
       <template #header>
         <div class="card-header" style="display: flex; align-items: center">
           <el-avatar :size="50" :src="this.watchingUser.userImg"></el-avatar>
-          <div style="margin-left: 2%;display:flex;flex-direction:column">
-            <span style="font-size: large;">{{
+          <div style="margin-left: 2%; display: flex; flex-direction: column">
+            <span style="font-size: large">{{
               this.watchingUser.userName
             }}</span>
-            <span style="font-size: small;">粉丝数:{{this.watchingUser.fans}}</span>
+            <span style="font-size: small"
+              >粉丝数:{{ this.watchingUser.fans }}</span
+            >
           </div>
 
-          <el-button class="button" type="primary" style="margin-left: 2%"
+          <el-button
+            class="button"
+            type="primary"
+            style="margin-left: 2%;width:90px"
+            v-if="!this.subscribed"
+            @click="subscribeYou"
             >关注</el-button
+          >
+          <el-button
+            class="button"
+            type="primary"
+            style="margin-left: 2%;width:90px"
+            v-else
+            plain
+            @click="cancelSubscribe"
+            >取消关注</el-button
           >
         </div>
       </template>
@@ -57,15 +73,22 @@ export default {
       pageNum: 1,
       courses: [],
       total: 0,
+      LoginUser: {},
+      userInfo: {},
+      subscribed: false,
     };
   },
   created() {
     this.userAccount = this.$route.params.account;
-    this.loadUser();
-    this.loadPage();
+    setTimeout(() => {
+      this.loadUser();
+      this.loadPage();
+    });
   },
   methods: {
     loadUser() {
+      this.LoginUser = this.$store.getters.getUser;
+      this.userInfo = this.LoginUser.userInfo;
       request({
         url: "/user",
         params: { userAccount: this.userAccount },
@@ -76,6 +99,20 @@ export default {
         } else {
           this.watchingUser = res.data.userInfo;
         }
+        this.loadSub();
+      });
+    },
+    loadSub() {
+      request({
+        url: "/user/subscribe/valid",
+        method: "get",
+        params: {
+          mainAccount: this.watchingUser.userAccount,
+          followAccount: this.userInfo.userAccount,
+        },
+      }).then((res) => {
+        if (res.code === "200") this.subscribed = true;
+        else this.subscribed = false;
       });
     },
     loadPage() {
@@ -90,6 +127,37 @@ export default {
     changePage(page) {
       this.pageNum = page;
       this.loadPage();
+    },
+    subscribeYou() {
+      var sub = {
+        mainAccount: this.watchingUser.userAccount,
+        followAccount: this.userInfo.userAccount,
+      };
+      request({
+        url: "/user/subscribe",
+        method: "post",
+        data: sub,
+      }).then((res) => {
+        if (res.code === "400") open(res.msg, "warning");
+        else open(res.msg, "success");
+        this.loadSub();
+        this.loadUser();
+      });
+    },
+    cancelSubscribe() {
+      request({
+        url: "/user/subscribe",
+        method: "delete",
+        params: {
+          mainAccount: this.watchingUser.userAccount,
+          followAccount: this.userInfo.userAccount,
+        },
+      }).then((res) => {
+        if (res.code === "400") open(res.msg, "warning");
+        else open(res.msg, "success");
+        this.loadSub();
+        this.loadUser();
+      });
     },
   },
 };
