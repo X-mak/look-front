@@ -41,7 +41,7 @@
     </div>
 
     <!-- 副区域 -->
-    <div style="width: 60vh; margin-top: 10px">
+    <div style="width: 60vh; margin-top: 10px;height:80vh">
       <!-- 作者简介 -->
       <div>
         <el-card class="box-card">
@@ -89,7 +89,7 @@
         </el-card>
       </div>
       <!-- 相关推荐 -->
-      <div>
+      <div style="">
         <div
           style="
             background-color: rgb(244, 244, 244);
@@ -100,7 +100,7 @@
           <p style="line-height: 40px; margin-left: 20px">相关推荐</p>
         </div>
         <div v-for="item in this.recommend">
-          <div class="single-recommend" @click="join(course)">
+          <div class="single-recommend" @click="join(item)">
             <el-image
               style="width: 100px; height: 80px; margin: 0px 15px"
               :src="item.courseImg"
@@ -159,8 +159,8 @@ export default {
       haveGot: false,
       subscribed: false,
       options: {
-        width: "880px", //播放器高度
-        height: "492px", //播放器高度
+        width: "820px", //播放器高度
+        height: "462px", //播放器高度
         color: "#409eff", //主题色
         title: "j", //视频名称
         src: "", //视频源
@@ -183,6 +183,7 @@ export default {
       this.LoginUser = this.$store.getters.getUser;
       this.userInfo = this.LoginUser.userInfo;
       this.load();
+      this.recommendLoad();
     });
   },
   methods: {
@@ -219,6 +220,8 @@ export default {
         else this.valid = 1;
         this.comment.push(this.courseId, this.valid);
       });
+    },
+    recommendLoad() {
       request({
         url: "course/random",
         method: "get",
@@ -287,7 +290,6 @@ export default {
   border-radius: 10px;
   margin: 20px 0;
   align-items: center;
-  display: flex;
   cursor: pointer;
 }
 .recommend-words {

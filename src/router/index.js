@@ -21,6 +21,7 @@ import {
 import Course from '../views/Course/Course.vue'
 import CourseVideo from '../views/Course/CourseVideo.vue'
 import UserPage from '../views/User/UserPage.vue'
+import UserSubscribeList from "../views/User/UserSubscribeList.vue"
 const routes = [{
         path: "/",
         name: "index",
@@ -57,6 +58,11 @@ const routes = [{
                 path: "info",
                 name: "userInfo",
                 component: UserInfo
+            },
+            {
+                path:"subscribeList",
+                name:"subscribe-list",
+                component : UserSubscribeList
             },
             {
                 path: "course",

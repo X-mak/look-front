@@ -48,14 +48,39 @@
             <div v-for="item in history" :key="item">
               <el-card
                 class="record-card"
-                style="width: 200px"
+                style="width: 300px"
                 @click="join(item)"
               >
-                <div style="display: flex; align-items: center">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                  "
+                >
                   <el-avatar :size="50" :src="item.courseImg"></el-avatar>
-                  <span style="font-size: large; margin-left: 20%">{{
-                    item.courseName
-                  }}</span>
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                    "
+                  >
+                    <span style="font-size: large; margin-left: 20%">{{
+                      item.courseName
+                    }}</span>
+                    <div style="margin-left: 20px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+                      <div>
+                        <span
+                          style="color: rgb(153, 153, 153); font-size: small"
+                          >热度:{{ item.clicks }}</span
+                        >
+                      </div>
+                      <span style="color: rgb(153, 153, 153); font-size: small"
+                        >观看时间:{{ item.publishDate.substring(5) }}</span
+                      >
+                    </div>
+                  </div>
                 </div>
               </el-card>
             </div>

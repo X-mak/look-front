@@ -80,11 +80,34 @@
               item.userInfo.userName
             }}</span>
             <el-rate v-model="item.star" :colors="colors" disabled> </el-rate>
+            <div
+              style="position: absolute; left: 76%; color: rgba(184, 184, 184)"
+            >
+              <div style="display: flex; align-items: center">
+                <span style="margin-right: 5px">{{ item.hot }}</span>
+                <img
+                  src="../../assets/img/like.png"
+                  style="width: 30px;cursor:pointer"
+                  class="thumb"
+                  @click="likeComment(item)"
+                />
+              </div>
+            </div>
           </div>
         </template>
         <div class="text item">
           <span>{{ item.context }}</span>
         </div>
+        <el-popconfirm title="您确认要删除此条评论吗?" v-if="item.own" @confirm="deleteComment(item)" style="cursor:pointer">
+          <template #reference>
+            <el-button
+              type="danger"
+              circle
+              style="margin-left: 140vh"
+              ><el-icon :size="15"><delete /></el-icon
+            ></el-button>
+          </template>
+        </el-popconfirm>
       </el-card>
     </div>
     <div style="display: flex">
@@ -103,6 +126,7 @@
 <script>
 import request from "../../utils/request";
 import { ElMessage } from "element-plus";
+import { Delete } from "@element-plus/icons-vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -113,6 +137,7 @@ const open = (msg, type) => {
 export default {
   props: ["comment"],
   name: "",
+  components: { Delete },
   data() {
     return {
       order: "date",
@@ -190,24 +215,50 @@ export default {
           url: "/course/comments",
           method: "post",
           data: this.myComment,
-        }).then((res)=>{
-          if(res.code == "400"){
-            open(res.msg,"warning");
-          }else{
-            open(res.msg,"success");
+        }).then((res) => {
+          if (res.code == "400") {
+            open(res.msg, "warning");
+          } else {
+            open(res.msg, "success");
           }
           this.pageLoad();
           this.myComment.context = "";
-        })
+        });
       }
     },
     changePage(page) {
       this.pageNum = page;
       this.pageLoad();
     },
+    deleteComment(item) {
+      request({
+        url:"/course/comments",
+        method:"delete",
+        params:{id:item.id}
+      }).then((res)=>{
+        if(res.code==="400")open(res.msg,"warning");
+        else open(res.msg,"success");
+        this.pageLoad();
+      })
+      
+    },
+    likeComment(item) {
+      request({
+        url:"/course/comments/like",
+        method:"post",
+        data:{commentId:item.id,userAccount:this.userInfo.userAccount}
+      }).then((res)=>{
+        if(res.code==="400")open(res.msg,"warning");
+        else open(res.msg,"success")
+        this.pageLoad();
+      })
+    },
   },
 };
 </script>
 
 <style scoped>
+.thumb :hover{
+  color:aqua
+}
 </style>

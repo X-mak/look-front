@@ -11,6 +11,7 @@
           <span>个人中心</span>
         </template>
         <el-menu-item index="/user/info">我的信息</el-menu-item>
+        <el-menu-item index="/user/subscribeList">我的关注</el-menu-item>
       </el-sub-menu>
       <el-sub-menu index="2">
         <template #title>

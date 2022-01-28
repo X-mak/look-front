@@ -14,11 +14,19 @@
       >
         <div class="single-course">
           <el-image
-            style="width: 150px; height: 150px"
+            style="width: 150px; height: 130px"
             :src="course.courseImg"
             fit="contain"
           ></el-image>
           <p>{{ course.courseName }}</p>
+          <div class="subcontent">
+            <div>
+              <span>热度:{{ course.clicks }}</span
+              >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <span>发布人:{{ course.userName }}</span>
+            </div>
+            <span>发布时间:</span><br /><span>{{ course.publishDate }}</span>
+          </div>
         </div>
       </el-card>
     </el-space>
@@ -83,7 +91,7 @@ export default {
 <style scoped>
 .el-card p {
   color: rgba(59, 59, 59, 0.8);
-  margin-top: 12%;
+  margin-top: 4%;
 }
 .el-card :hover p {
   color: rgb(148, 223, 241, 0.8);
@@ -93,5 +101,8 @@ export default {
 }
 .el-space p {
   text-align: center;
+}
+.subcontent{
+   color: rgba(184, 184, 184);font-size: small;
 }
 </style>
