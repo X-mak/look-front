@@ -1,47 +1,95 @@
 <template>
   <el-header
     height="60px"
-    style="
-      flex-direction: row;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    "
+    style="flex-direction: row; display: flex; align-items: center"
   >
     <div @click="goMain" class="logo">
-      <el-row style="
-      flex-direction: row;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    ">
-        <img src="../../assets/img/look_logo.jpg" alt="" style="width: 60px"/>
+      <el-row>
+        <img src="../../assets/img/look_logo.jpg" alt="" style="width: 60px" />
       </el-row>
     </div>
-
-    <el-icon :size="20"><search /></el-icon>
-
-    <el-form
-      ref="form"
-      label-width="180px"
-      :inline="true"
-      size="normal"
-      @submit.native.prevent
-      style="margin-top: 1.5%; margin-left: -34%"
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        margin-top: 2%;
+        margin-left: 35%;
+      "
     >
-      <el-form-item>
-        <el-input
-          type="text"
-          v-model="this.search"
-          @keyup.enter="searchCourse"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="searchCourse">搜索</el-button>
-      </el-form-item>
-    </el-form>
+      <el-form
+        ref="form"
+        label-width="180px"
+        :inline="true"
+        size="normal"
+        @submit.native.prevent
+      >
+        <el-form-item>
+          <el-input
+            type="text"
+            v-model="this.search"
+            @keyup.enter="searchCourse"
+          >
+            <template #prefix>
+              <el-icon :size="20" style="margin-top: 30%"><search /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="searchCourse">搜索</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
-    <el-dropdown>
+    <el-dropdown style="margin-left: 30%" v-if="logined">
+      <span class="el-dropdown-link"> 观看记录 </span>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-scrollbar max-height="400px">
+            <div v-for="item in history" :key="item">
+              <el-card
+                class="record-card"
+                style="width: 300px"
+                @click="join(item)"
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                  "
+                >
+                  <el-avatar :size="50" :src="item.courseImg"></el-avatar>
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                    "
+                  >
+                    <span style="font-size: large; margin-left: 20%">{{
+                      item.courseName
+                    }}</span>
+                    <div style="margin-left: 20px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+                      <div>
+                        <span
+                          style="color: rgb(153, 153, 153); font-size: small"
+                          >热度:{{ item.clicks }}</span
+                        >
+                      </div>
+                      <span style="color: rgb(153, 153, 153); font-size: small"
+                        >观看时间:{{ item.publishDate.substring(5) }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </el-card>
+            </div>
+          </el-scrollbar>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+
+    <el-dropdown style="position: absolute; right: 2%">
       <span class="el-dropdown-link">
         <el-avatar size="small" :src="UserImg"></el-avatar>
       </span>
@@ -70,6 +118,7 @@
 
 <script>
 import { Search, Coin } from "@element-plus/icons-vue";
+import request from "../../utils/request";
 export default {
   data() {
     return {
@@ -78,6 +127,7 @@ export default {
       UserImg: "",
       userInfo: "",
       logined: false,
+      history: [],
     };
   },
   components: { Search, Coin },
@@ -101,6 +151,15 @@ export default {
       } else {
         this.logined = true;
       }
+      if (this.logined) {
+        request({
+          url: "/course/history/1",
+          method: "get",
+          params: { userAccount: this.userInfo.userAccount, pageSize: 30 },
+        }).then((res) => {
+          this.history = res.data;
+        });
+      }
     },
     goLogin() {
       this.$router.push("/login");
@@ -119,10 +178,18 @@ export default {
     logOut() {
       sessionStorage.setItem("token", "");
       this.load();
-      this.UserImg="";
+      this.UserImg = "";
     },
     goMain() {
       this.$router.push("/main");
+    },
+    join(item) {
+      this.$router.push({
+        path: "/course/video",
+        query: {
+          id: item.id,
+        },
+      });
     },
   },
 };
@@ -131,5 +198,11 @@ export default {
 <style>
 .logo {
   cursor: pointer;
+}
+.record-card {
+  cursor: pointer;
+}
+.record-card :hover span {
+  color: rgb(148, 223, 241, 0.8);
 }
 </style>

@@ -1,24 +1,131 @@
 <template>
   <index-header></index-header>
 
-  <el-card>
-    <p style="text-align: center; font-size: 30px">
-      {{ this.course.courseName }}
-    </p>
-    <!-- card body -->
-    <div style="display: flex; align-items: center; justify-content: center">
-      <el-avatar :src="this.publisher.userImg"></el-avatar>
-      <span style="font-size: 20px; margin: 0 30px">{{
-        this.publisher.userName
-      }}</span>
+  <div
+    style="width: 180vh; margin: 10px auto; display: flex; flex-direction: row"
+  >
+    <!-- 主题区域 -->
+    <div style="width: 120vh">
+      <!-- 标题 -->
+      <div style="margin: 20px 10px">
+        <span style="font-size: 26px; font-weight: bold">{{
+          this.course.courseName
+        }}</span>
+        <p
+          style="
+            color: rgb(153, 181, 215, 0.8);
+            font-size: 14px;
+            margin-top: 4px;
+          "
+        >
+          热度:{{ this.course.clicks }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          发布时间:{{ this.course.publishDate }}
+        </p>
+      </div>
+      <!-- 视频区域 -->
+      <div class="demo" style="width: 880px">
+        <video-play
+          v-if="haveGot"
+          v-bind="this.options"
+          ref="videoPlayer"
+          @play="startWatching"
+        ></video-play>
+      </div>
+      <div>
+        <comments-part
+          :comment="this.comment"
+          v-if="valid != 0"
+          style="margin-top: 40px"
+        ></comments-part>
+      </div>
     </div>
-  </el-card>
-  <div class="demo" style="margin: 0 auto; width: 800px">
-    <video-play
-      v-if="haveGot"
-      v-bind="this.options"
-      ref="videoPlayer"
-    ></video-play>
+
+    <!-- 副区域 -->
+    <div style="width: 60vh; margin-top: 10px;height:80vh">
+      <!-- 作者简介 -->
+      <div>
+        <el-card class="box-card">
+          <template #header>
+            <div class="card-header" style="display: flex; align-items: center">
+              <div
+                style="width: 200px; display: flex; align-items: center"
+                class="user-entrance"
+                @click="watchUser"
+              >
+                <el-avatar :size="50" :src="this.publisher.userImg"></el-avatar>
+                <div
+                  style="
+                    margin-left: 10%;
+                    display: flex;
+                    flex-direction: column;
+                  "
+                >
+                  <p style="font-size: 20px">{{ this.publisher.userName }}</p>
+                  <span style="font-size: small; color: rgb(153, 181, 215, 0.8)"
+                    >粉丝数:{{ this.publisher.fans }}</span
+                  >
+                </div>
+              </div>
+
+              <el-button
+                class="button"
+                type="primary"
+                style="margin-left: 25%; width: 90px"
+                v-if="!this.subscribed"
+                @click="subscribeYou"
+                >关注</el-button
+              >
+              <el-button
+                class="button"
+                type="primary"
+                style="margin-left: 25%; width: 90px"
+                v-else
+                plain
+                @click="cancelSubscribe"
+                >取消关注</el-button
+              >
+            </div>
+          </template>
+        </el-card>
+      </div>
+      <!-- 相关推荐 -->
+      <div style="">
+        <div
+          style="
+            background-color: rgb(244, 244, 244);
+            height: 40px;
+            margin: 10px 0;
+          "
+        >
+          <p style="line-height: 40px; margin-left: 20px">相关推荐</p>
+        </div>
+        <div v-for="item in this.recommend">
+          <div class="single-recommend" @click="join(item)">
+            <el-image
+              style="width: 100px; height: 80px; margin: 0px 15px"
+              :src="item.courseImg"
+              fit="contain"
+            ></el-image>
+            <div class="recommend-words">
+              <span style="font-size: 20px" class="recommend-title">{{
+                item.courseName
+              }}</span>
+              <div>
+                <span style="color: rgb(153, 153, 153); font-size: small"
+                  >发布人:{{ item.userName }}</span
+                >&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="color: rgb(153, 153, 153); font-size: small"
+                  >热度:{{ item.clicks }}</span
+                >
+              </div>
+              <span style="color: rgb(153, 153, 153); font-size: small"
+                >发布时间:{{ item.publishDate }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,21 +134,33 @@ import IndexHeader from "../../components/IndexPart/IndexHeader.vue";
 import "vue3-video-play/dist/style.css";
 import { videoPlay } from "vue3-video-play";
 import request from "../../utils/request";
+import CommentsPart from "../../components/Course/CommentsPart.vue";
+import { ElMessage } from "element-plus";
+const open = (msg, type) => {
+  ElMessage({
+    showClose: true,
+    message: msg,
+    type: type,
+  });
+};
 export default {
   name: "",
-  components: { IndexHeader, videoPlay },
+  components: { IndexHeader, videoPlay, CommentsPart },
   data() {
     return {
       courseId: 0,
       course: {},
-      valid: false,
+      valid: 0,
+      comment: [],
       LoginUser: {},
       userInfo: {},
       publisher: {},
+      recommend: [],
       haveGot: false,
+      subscribed: false,
       options: {
-        width: "800px", //播放器高度
-        height: "450px", //播放器高度
+        width: "820px", //播放器高度
+        height: "462px", //播放器高度
         color: "#409eff", //主题色
         title: "j", //视频名称
         src: "", //视频源
@@ -64,6 +183,7 @@ export default {
       this.LoginUser = this.$store.getters.getUser;
       this.userInfo = this.LoginUser.userInfo;
       this.load();
+      this.recommendLoad();
     });
   },
   methods: {
@@ -73,24 +193,117 @@ export default {
         method: "get",
       }).then((res) => {
         this.course = res.data;
+
         this.publisher = res.data.userInfo;
         this.options.src = res.data.courseVideo;
         this.options.title = res.data.courseName;
         this.options.poster = res.data.courseImg;
         this.haveGot = true;
+        request({
+          url: "/user/subscribe/valid",
+          method: "get",
+          params: {
+            mainAccount: this.publisher.userAccount,
+            followAccount: this.userInfo.userAccount,
+          },
+        }).then((res) => {
+          if (res.code === "200") this.subscribed = true;
+          else this.subscribed = false;
+        });
       });
       request({
         url: "/manage/course/" + this.courseId,
         method: "get",
         params: { userAccount: this.userInfo.userAccount },
       }).then((res) => {
-        if (res.code === "400") this.valid = false;
-        else this.valid = true;
+        if (res.code === "400") this.valid = -1;
+        else this.valid = 1;
+        this.comment.push(this.courseId, this.valid);
       });
+    },
+    recommendLoad() {
+      request({
+        url: "course/random",
+        method: "get",
+        params: { age: "", limit: 2 },
+      }).then((res) => {
+        this.recommend = res.data;
+      });
+    },
+    startWatching() {
+      request({
+        url: "/course/history",
+        method: "post",
+        params: { id: this.courseId, userAccount: this.userInfo.userAccount },
+      });
+    },
+    subscribeYou() {
+      var sub = {
+        mainAccount: this.publisher.userAccount,
+        followAccount: this.userInfo.userAccount,
+      };
+      request({
+        url: "/user/subscribe",
+        method: "post",
+        data: sub,
+      }).then((res) => {
+        if (res.code === "400") open(res.msg, "warning");
+        else open(res.msg, "success");
+        this.load();
+      });
+    },
+    cancelSubscribe() {
+      request({
+        url: "/user/subscribe",
+        method: "delete",
+        params: {
+          mainAccount: this.publisher.userAccount,
+          followAccount: this.userInfo.userAccount,
+        },
+      }).then((res) => {
+        if (res.code === "400") open(res.msg, "warning");
+        else open(res.msg, "success");
+        this.load();
+      });
+    },
+    join(course) {
+      this.$router.push({
+        path: "/course",
+        query: {
+          id: course.id,
+        },
+      });
+    },
+    watchUser() {
+      this.$router.push("/userPage/" + this.publisher.userAccount);
     },
   },
 };
 </script>
 
 <style scoped>
+.single-recommend {
+  height: 120px;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid rgb(244, 244, 244);
+  border-radius: 10px;
+  margin: 20px 0;
+  align-items: center;
+  cursor: pointer;
+}
+.recommend-words {
+  display: flex;
+  flex-direction: column;
+}
+.single-recommend :hover .recommend-title {
+  color: rgb(148, 223, 241, 0.8);
+}
+
+.user-entrance {
+  cursor: pointer;
+}
+.user-entrance :hover p {
+  color: rgb(148, 223, 241, 0.8);
+}
 </style>

@@ -21,7 +21,7 @@
       >
         <p style="font-size: 40px;">课程名: {{ this.course.courseName }}</p>
         <p style="font-size: 20px">发布人:</p>
-        <el-card>
+        <el-card @click="watchUser" class="publisher">
           <!-- card body -->
           <div style="display: flex; align-items: center">
             <el-avatar :src="this.publisher.userImg"></el-avatar>
@@ -38,15 +38,16 @@
           <el-icon :size="30" style=""><coin /></el-icon>
         </el-row>
 
-        <el-button type="primary" size="default" v-if="!valid" @click="buy"
+        <el-button type="primary" size="default" v-if="valid==-1" @click="buy"
           >购买课程</el-button
         >
-        <el-button type="primary" size="default" v-else @click="enterClass"
+        <el-button type="primary" size="default" v-if="valid==1" @click="enterClass"
           >进入课程</el-button
         >
       </div>
     </div>
   </el-card>
+  <comments-part  :comment="this.comment" v-if="valid!=0" />
 </template>
 
 <script>
@@ -54,7 +55,7 @@ import IndexHeader from "../../components/IndexPart/IndexHeader.vue";
 import request from "../../utils/request";
 import { ElMessage } from "element-plus";
 import { Coin } from "@element-plus/icons-vue";
-
+import CommentsPart from "../../components/Course/CommentsPart.vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -64,15 +65,16 @@ const open = (msg, type) => {
 };
 export default {
   name: "",
-  components: { IndexHeader, Coin },
+  components: { IndexHeader, Coin,CommentsPart },
   data() {
     return {
       courseId: 0,
       course: {},
       userInfo: {},
-      valid: false,
+      valid: 0,
       publisher: {},
       LoginUser: {},
+      comment:[],
     };
   },
   created() {
@@ -97,10 +99,11 @@ export default {
         method: "get",
         params: { userAccount: this.userInfo.userAccount },
       }).then((res) => {
-        if (res.code === "400") this.valid = false;
+        if (res.code === "400") this.valid = -1
         else {
-          this.valid = true;
+          this.valid = 1;
         }
+        this.comment.push(this.courseId,this.valid);
       });
     },
     buy() {
@@ -125,6 +128,9 @@ export default {
         },
       });
     },
+    watchUser(){
+      this.$router.push("/userPage/"+this.publisher.userAccount);
+    }
   },
 };
 </script>
@@ -132,5 +138,9 @@ export default {
 <style scoped>
 p{
   margin:20px 0;
+}
+.publisher :hover{
+  color: rgb(148, 223, 241, 0.8);
+  cursor: pointer;
 }
 </style>

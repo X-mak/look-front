@@ -1,12 +1,12 @@
 <template>
-  <div style="display: flex; flex-direction: column; width: 1500px">
+  <div style="display: flex; flex-direction: column">
     <el-space wrap>
       <el-card
         v-for="course in courses"
         style="
-          width: 250px;
-          height: 250px;
-          margin: 10px 0;
+          width: 220px;
+          height: 240px;
+          margin: 30px 23px;
           display: flex;
           justify-content: center;
         "
@@ -14,18 +14,17 @@
       >
         <div class="single-course">
           <el-image
-            style="width: 150px; height: 130px"
+            style="width: 150px; height: 120px; border-radius: 14px"
             :src="course.courseImg"
             fit="contain"
           ></el-image>
           <p>{{ course.courseName }}</p>
           <div class="subcontent">
             <div>
-              <span>热度:{{ course.clicks }}</span
-              >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <span>热度:{{ course.clicks }}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <span>发布人:{{ course.userName }}</span>
             </div>
-            <span>发布时间:</span><br /><span>{{ course.publishDate }}</span>
+            <span>发布时间:</span><br><span>{{course.publishDate}}</span>
           </div>
         </div>
       </el-card>
@@ -42,47 +41,24 @@
 </template>
 
 <script>
-import request from "../../utils/request";
 export default {
+  props: ["courses", "total"],
+  emits: ["changePage"],
   name: "",
   data() {
-    return {
-      LoginUser: {},
-      userInfo: {},
-      pageNum: 1,
-      courses: [],
-      total: 1,
-    };
-  },
-  created() {
-    setTimeout(() => {
-      this.LoginUser = this.$store.getters.getUser;
-      this.userInfo = this.LoginUser.userInfo;
-      this.load();
-    });
+    return {};
   },
   methods: {
-    load() {
-      request({
-        url: "/course/bought/" + this.pageNum,
-        method: "get",
-        params: { userAccount: this.userInfo.userAccount, pageSize: 3 },
-      }).then((res) => {
-        this.courses = res.data;
-        this.total = parseInt(res.msg);
-      });
-    },
     join(course) {
       this.$router.push({
-        path: "/course/video",
+        path: "/course",
         query: {
           id: course.id,
         },
       });
     },
     changePage(page) {
-      this.pageNum = page;
-      this.load();
+      this.$emit("changePage", page);
     },
   },
 };
@@ -92,6 +68,7 @@ export default {
 .el-card p {
   color: rgba(59, 59, 59, 0.8);
   margin-top: 4%;
+  font-size:18px;
 }
 .el-card :hover p {
   color: rgb(148, 223, 241, 0.8);
@@ -102,7 +79,15 @@ export default {
 .el-space p {
   text-align: center;
 }
+
 .subcontent{
    color: rgba(184, 184, 184);font-size: small;
+}
+
+.single-course{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>
