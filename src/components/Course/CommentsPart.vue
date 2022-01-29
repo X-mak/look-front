@@ -90,6 +90,13 @@
                   style="width: 30px;cursor:pointer"
                   class="thumb"
                   @click="likeComment(item)"
+                  v-if="item.liked"
+                />
+                <img
+                  src="../../assets/img/like_hover.png"
+                  style="width: 30px;cursor:pointer"
+                  class="thumb"
+                  v-else
                 />
               </div>
             </div>

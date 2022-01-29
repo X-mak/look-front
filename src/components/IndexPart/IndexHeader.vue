@@ -16,6 +16,7 @@
         margin-left: 35%;
       "
     >
+      <!-- 搜索栏 -->
       <el-form
         ref="form"
         label-width="180px"
@@ -40,7 +41,70 @@
       </el-form>
     </div>
 
-    <el-dropdown style="margin-left: 30%" v-if="logined">
+    <!-- 动态 -->
+    <el-dropdown style="margin-left: 25%" v-if="logined">
+      <span class="el-dropdown-link"> 动态 </span>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-scrollbar max-height="400px">
+            <div v-for="item in update" :key="item">
+              <el-card
+                class="record-card"
+                style="width: 300px"
+                @click="join(item)"
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    flex-direction: row;
+                  "
+                >
+                  <el-avatar :size="50" :src="item.courseImg"></el-avatar>
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                    "
+                  >
+                    <span style="font-size: large; margin-left: 20%">{{
+                      item.courseName
+                    }}</span>
+                    <div
+                      style="
+                        margin-left: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+                      "
+                    >
+                      <div>
+                        <span
+                          style="color: rgb(153, 153, 153); font-size: small"
+                          >发布人:{{ item.userName }}</span
+                        >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span
+                          style="color: rgb(153, 153, 153); font-size: small"
+                          >热度:{{ item.clicks }}</span
+                        >
+                      </div>
+                      <span style="color: rgb(153, 153, 153); font-size: small"
+                        >发布时间:{{ item.publishDate.substring(5) }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </el-card>
+            </div>
+          </el-scrollbar>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+
+    <!-- 观看记录 -->
+    <el-dropdown style="margin-left: 5%" v-if="logined">
       <span class="el-dropdown-link"> 观看记录 </span>
       <template #dropdown>
         <el-dropdown-menu>
@@ -69,7 +133,15 @@
                     <span style="font-size: large; margin-left: 20%">{{
                       item.courseName
                     }}</span>
-                    <div style="margin-left: 20px;display:flex;align-items:center;justify-content:center;flex-direction:column">
+                    <div
+                      style="
+                        margin-left: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+                      "
+                    >
                       <div>
                         <span
                           style="color: rgb(153, 153, 153); font-size: small"
@@ -89,6 +161,7 @@
       </template>
     </el-dropdown>
 
+    <!-- 用户信息 -->
     <el-dropdown style="position: absolute; right: 2%">
       <span class="el-dropdown-link">
         <el-avatar size="small" :src="UserImg"></el-avatar>
@@ -99,15 +172,18 @@
             >登录</el-dropdown-item
           >
 
-          <el-dropdown-item @click="goUser" v-if="logined"
-            >个人中心</el-dropdown-item
+          <el-dropdown-item @click="goUser" v-if="logined" 
+            > <span style="margin:0 auto;"> 个人中心</span></el-dropdown-item
+          >
+          <el-dropdown-item @click="goSubscribe" v-if="logined"
+            > <span style="text-align:center;margin:0 auto;">关注:{{this.userInfo.subscribes}}</span> </el-dropdown-item
           >
           <el-dropdown-item v-if="logined">
             <el-icon :size="12"><coin /></el-icon>
             <span>硬币:{{ this.userInfo.coins }}</span>
           </el-dropdown-item>
           <el-dropdown-item @click="logOut" v-if="logined"
-            >退出登录</el-dropdown-item
+            ><span style="margin:0 auto;">退出登录</span></el-dropdown-item
           >
         </el-dropdown-menu>
       </template>
@@ -125,9 +201,10 @@ export default {
       LoginUser: {},
       search: "",
       UserImg: "",
-      userInfo: "",
+      userInfo: {},
       logined: false,
       history: [],
+      update: [],
     };
   },
   components: { Search, Coin },
@@ -158,6 +235,20 @@ export default {
           params: { userAccount: this.userInfo.userAccount, pageSize: 30 },
         }).then((res) => {
           this.history = res.data;
+        });
+        request({
+          url: "/manage/subscribe/course/1",
+          method: "get",
+          params: { userAccount: this.userInfo.userAccount, pageSize: 30 },
+        }).then((res) => {
+          this.update = res.data;
+        });
+        request({
+          url: "/user/subscribe/count",
+          method: "get",
+          params: { userAccount: this.userInfo.userAccount },
+        }).then((res) => {
+          this.userInfo.subscribes = res.data;
         });
       }
     },
@@ -191,6 +282,9 @@ export default {
         },
       });
     },
+    goSubscribe(){
+      this.$router.push("/user/subscribeList");
+    }
   },
 };
 </script>
