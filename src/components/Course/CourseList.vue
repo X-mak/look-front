@@ -10,6 +10,7 @@
           display: flex;
           justify-content: center;
         "
+        shadow="hover"
         @click="join(course)"
       >
         <div class="single-course">

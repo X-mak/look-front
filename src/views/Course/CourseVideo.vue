@@ -2,10 +2,10 @@
   <index-header></index-header>
 
   <div
-    style="width: 180vh; margin: 10px auto; display: flex; flex-direction: row"
+    style="width: 80%; margin: 10px auto; display: flex; flex-direction: row"
   >
     <!-- 主题区域 -->
-    <div style="width: 120vh">
+    <div style="width: 70%">
       <!-- 标题 -->
       <div style="margin: 20px 10px">
         <span style="font-size: 26px; font-weight: bold">{{
@@ -31,17 +31,10 @@
           @play="startWatching"
         ></video-play>
       </div>
-      <div>
-        <comments-part
-          :comment="this.comment"
-          v-if="valid != 0"
-          style="margin-top: 40px"
-        ></comments-part>
-      </div>
     </div>
 
     <!-- 副区域 -->
-    <div style="width: 60vh; margin-top: 10px;height:80vh">
+    <div style="width: 30%; margin-top: 10px; height: auto">
       <!-- 作者简介 -->
       <div>
         <el-card class="box-card">
@@ -126,6 +119,13 @@
         </div>
       </div>
     </div>
+  </div>
+  <div>
+    <comments-part
+      :comment="this.comment"
+      v-if="valid != 0"
+      style="margin: 40px auto"
+    ></comments-part>
   </div>
 </template>
 

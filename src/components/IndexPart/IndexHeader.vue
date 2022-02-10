@@ -1,19 +1,25 @@
 <template>
   <el-header
-    height="60px"
+    height="80px"
     style="flex-direction: row; display: flex; align-items: center"
   >
-    <div @click="goMain" class="logo">
+    <div class="logo">
       <el-row>
-        <img src="../../assets/img/look_logo.jpg" alt="" style="width: 60px" />
+        <img src="../../assets/img/logo.jpg" alt="" style="height: 60px" />
       </el-row>
     </div>
+
+    <!-- 相关按钮 -->
+    <div class="head-btn"><p @click="goMain">首页</p></div>
+    <div class="head-btn"><p @click="searchCourse">课程</p></div>
+    <div class="head-btn"><p>作者</p></div>
+    <div class="head-btn"><p @click="goUser">我的</p></div>
     <div
       style="
         display: flex;
         flex-direction: row;
         margin-top: 2%;
-        margin-left: 35%;
+        margin-left: 4%;
       "
     >
       <!-- 搜索栏 -->
@@ -23,6 +29,7 @@
         :inline="true"
         size="normal"
         @submit.native.prevent
+        class="form"
       >
         <el-form-item>
           <el-input
@@ -30,19 +37,22 @@
             v-model="this.search"
             @keyup.enter="searchCourse"
           >
-            <template #prefix>
-              <el-icon :size="20" style="margin-top: 30%"><search /></el-icon>
-            </template>
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="searchCourse">搜索</el-button>
+          <el-button
+            type="primary"
+            @click="searchCourse"
+            class="searchBtn"
+            round
+            ><el-icon :size="20"><search /></el-icon
+          ></el-button>
         </el-form-item>
       </el-form>
     </div>
 
     <!-- 动态 -->
-    <el-dropdown style="margin-left: 25%" v-if="logined">
+    <el-dropdown style="margin-left: 3%" v-if="logined">
       <span class="el-dropdown-link"> 动态 </span>
       <template #dropdown>
         <el-dropdown-menu>
@@ -104,7 +114,7 @@
     </el-dropdown>
 
     <!-- 观看记录 -->
-    <el-dropdown style="margin-left: 5%" v-if="logined">
+    <el-dropdown style="margin-left: 3%" v-if="logined">
       <span class="el-dropdown-link"> 观看记录 </span>
       <template #dropdown>
         <el-dropdown-menu>
@@ -161,6 +171,13 @@
       </template>
     </el-dropdown>
 
+    <div>
+      <div class="login-info" v-if="!logined" @click="goLogin">
+        <p>登录/注册</p>
+        <img src="../../assets/img/login.jpg" alt="" style="width: 40px" />
+      </div>
+    </div>
+
     <!-- 用户信息 -->
     <el-dropdown style="position: absolute; right: 2%">
       <span class="el-dropdown-link">
@@ -172,18 +189,20 @@
             >登录</el-dropdown-item
           >
 
-          <el-dropdown-item @click="goUser" v-if="logined" 
-            > <span style="margin:0 auto;"> 个人中心</span></el-dropdown-item
+          <el-dropdown-item @click="goUser" v-if="logined">
+            <span style="margin: 0 auto"> 个人中心</span></el-dropdown-item
           >
-          <el-dropdown-item @click="goSubscribe" v-if="logined"
-            > <span style="text-align:center;margin:0 auto;">关注:{{this.userInfo.subscribes}}</span> </el-dropdown-item
-          >
+          <el-dropdown-item @click="goSubscribe" v-if="logined">
+            <span style="text-align: center; margin: 0 auto"
+              >关注:{{ this.userInfo.subscribes }}</span
+            >
+          </el-dropdown-item>
           <el-dropdown-item v-if="logined">
             <el-icon :size="12"><coin /></el-icon>
             <span>硬币:{{ this.userInfo.coins }}</span>
           </el-dropdown-item>
           <el-dropdown-item @click="logOut" v-if="logined"
-            ><span style="margin:0 auto;">退出登录</span></el-dropdown-item
+            ><span style="margin: 0 auto">退出登录</span></el-dropdown-item
           >
         </el-dropdown-menu>
       </template>
@@ -256,7 +275,9 @@ export default {
       this.$router.push("/login");
     },
     goUser() {
-      this.$router.push("/user/info");
+      if (this.logined) this.$router.push("/user/info");
+      else {this.$router.push("/login");
+      }
     },
     searchCourse() {
       this.$router.push({
@@ -282,21 +303,55 @@ export default {
         },
       });
     },
-    goSubscribe(){
+    goSubscribe() {
       this.$router.push("/user/subscribeList");
-    }
+    },
   },
 };
 </script>
 
 <style>
 .logo {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.head-btn {
+  margin: 0 3%;
+}
+.head-btn p {
+  font-size: large;
+  width: 40px;
+  user-select: none;
+}
+.head-btn :hover {
   cursor: pointer;
+  color: rgb(148, 223, 241, 0.8);
 }
 .record-card {
   cursor: pointer;
 }
 .record-card :hover span {
   color: rgb(148, 223, 241, 0.8);
+}
+.form input {
+  border-radius: 20px;
+}
+.searchBtn {
+  margin-left: -100%;
+}
+.el-dropdown-link {
+  font-size: 16px;
+}
+.login-info {
+  display: flex;
+  width: 200px;
+}
+.login-info :hover {
+  color: rgb(148, 223, 241, 0.8);
+  cursor: pointer;
+}
+.login-info p {
+  font-size: large;
+  margin-top: 5%;
 }
 </style>

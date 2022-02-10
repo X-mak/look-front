@@ -2,7 +2,7 @@
   <IndexHeader></IndexHeader>
   <div
     style="
-      width: 180vh;
+      width: 80%;
       margin: 2% auto;
       background-color: rgba(211, 211, 211, 0.6);
     "
@@ -95,6 +95,7 @@ export default {
       }).then((res) => {
         if (res.msg === "400") {
           this.$router.push("/main");
+          console.log(res)
           open("用户不存在!", "warning");
         } else {
           this.watchingUser = res.data.userInfo;

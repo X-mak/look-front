@@ -116,7 +116,7 @@ export default {
 
 <style scoped>
 .main-box {
-  width: 140vh;
+  width: 80%;
   margin: 10px auto;
   background-color: rgba(211, 211, 211, 0.6);
   display: flex;

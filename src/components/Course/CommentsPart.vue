@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 160vh; margin: 80px auto" class="demo-shadow">
+  <div style="width: 1000px; margin: 80px auto" class="demo-shadow">
     <el-menu mode="horizontal" default-active="2">
       <el-menu-item index="1" @click="hotOrder">按热度排序</el-menu-item>
       <el-menu-item index="2" @click="dateOrder">按时间排序</el-menu-item>
@@ -8,7 +8,7 @@
       v-if="valid == 1"
       style="
         display: flex;
-        width: 160vh;
+        width: 100%;
         margin: 30px auto;
         justify-content: center;
       "
@@ -67,7 +67,7 @@
       >
     </div>
     <hr style="color: rgba(184, 184, 184, 0.3)" v-if="valid == 1" />
-    <div style="width: 150vh; margin: 40px auto" v-for="item in allComments">
+    <div style="width: 100%; margin: 40px auto" v-for="item in allComments">
       <el-card class="box-card">
         <template #header>
           <div class="card-header" style="display: flex; align-items: center">
@@ -81,7 +81,7 @@
             }}</span>
             <el-rate v-model="item.star" :colors="colors" disabled> </el-rate>
             <div
-              style="position: absolute; left: 76%; color: rgba(184, 184, 184)"
+              style="position: absolute; left: 78.5%; color: rgba(184, 184, 184)"
             >
               <div style="display: flex; align-items: center">
                 <span style="margin-right: 5px">{{ item.hot }}</span>
@@ -110,7 +110,7 @@
             <el-button
               type="danger"
               circle
-              style="margin-left: 140vh"
+              style="margin-left: 90%"
               ><el-icon :size="15"><delete /></el-icon
             ></el-button>
           </template>

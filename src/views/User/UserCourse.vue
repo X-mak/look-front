@@ -6,10 +6,11 @@
         style="
           width: 250px;
           height: 250px;
-          margin: 10px 0;
+          margin: 20px 30px;
           display: flex;
           justify-content: center;
         "
+        shadow="hover"
         @click="join(course)"
       >
         <div class="single-course">
