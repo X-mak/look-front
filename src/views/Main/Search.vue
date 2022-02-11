@@ -1,7 +1,7 @@
 <template>
-  <div style="display: flex; flex-direction: column; width: 180vh;margin:10px auto;">
+  <div style="display: flex; flex-direction: column; width: 80%;margin:2% auto;">
     <div style="margin: 0 auto; width: 1200px">
-      <el-row style="margin: 0 auto; width: 600px">
+      <el-row style="margin: 6px auto; width: 600px">
         <div style="display: flex; align-items: center">
           <el-icon :size="16"><clock /></el-icon>
           <el-button type="text" size="default" @click="timeOrder"
@@ -80,8 +80,8 @@ export default {
       total: 0,
       ageList: ["兴趣爱好", "职业技能"],
       subjectList:[],
-      hobbyList: ["音乐","游戏","棋类","运动","美术"],
-      skillList:["管理","计算机","会计","数学","职业意见"],
+      hobbyList: [],
+      skillList:[],
       age: "",
       subject: "",
     };
@@ -92,6 +92,8 @@ export default {
   },
   methods: {
     load() {
+      this.hobbyList = this.$store.getters.getHobby;
+      this.skillList = this.$store.getters.getSkill;
       request({
         url: "/course/keyword/" + this.pageNum,
         method: "get",

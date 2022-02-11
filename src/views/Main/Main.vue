@@ -78,17 +78,19 @@
         <index-show-course :courses="this.freeCourse" />
       </el-card>
     </div>
+    <index-footer/>
   </div>
 </template>
 
 <script>
 import IndexShowCourse from "../../components/IndexPart/IndexShowCourse.vue";
+import IndexFooter from "../../components/IndexPart/IndexFooter.vue";
 import request from "../../utils/request";
 import { Refresh } from "@element-plus/icons-vue";
 
 export default {
   name: "",
-  components: { IndexShowCourse, Refresh },
+  components: { IndexShowCourse, Refresh ,IndexFooter },
   data() {
     return {
       recentCourse: [],

@@ -12,7 +12,7 @@
     <!-- 相关按钮 -->
     <div class="head-btn"><p @click="goMain">首页</p></div>
     <div class="head-btn"><p @click="searchCourse">课程</p></div>
-    <div class="head-btn"><p>作者</p></div>
+    <div class="head-btn"><p @click="goUserSearch">作者</p></div>
     <div class="head-btn"><p @click="goUser">我的</p></div>
     <div
       style="
@@ -227,7 +227,7 @@ export default {
     };
   },
   components: { Search, Coin },
-  mounted() {
+  created() {
     setTimeout(() => {
       this.load();
     });
@@ -276,7 +276,8 @@ export default {
     },
     goUser() {
       if (this.logined) this.$router.push("/user/info");
-      else {this.$router.push("/login");
+      else {
+        this.$router.push("/login");
       }
     },
     searchCourse() {
@@ -306,6 +307,14 @@ export default {
     goSubscribe() {
       this.$router.push("/user/subscribeList");
     },
+    goUserSearch(){
+      this.$router.push({
+        path: "/user_search",
+        query: {
+          keyword: "",
+        },
+      });
+    }
   },
 };
 </script>
@@ -316,12 +325,14 @@ export default {
   margin-right: 5%;
 }
 .head-btn {
-  margin: 0 3%;
+  width: 130px;
 }
 .head-btn p {
   font-size: large;
-  width: 40px;
   user-select: none;
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
 }
 .head-btn :hover {
   cursor: pointer;

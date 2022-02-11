@@ -21,7 +21,7 @@ service.interceptors.request.use(
                 return config;
             }
             if(token === null) {
-                router.push("/login")
+                // router.push("/login")
             } else {
                 config.headers['token'] = token;  // 设置请求头
             }

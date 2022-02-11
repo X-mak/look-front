@@ -22,6 +22,7 @@ import Course from '../views/Course/Course.vue'
 import CourseVideo from '../views/Course/CourseVideo.vue'
 import UserPage from '../views/User/UserPage.vue'
 import UserSubscribeList from "../views/User/UserSubscribeList.vue"
+import UserSearch from '../views/Main/UserSearch.vue'
 const routes = [{
         path: "/",
         name: "index",
@@ -36,6 +37,11 @@ const routes = [{
                 path: "main",
                 name: "main",
                 component: Main,
+            },
+            {
+                path: "user_search",
+                name: "userSearch",
+                component: UserSearch,
             }
         ]
     },

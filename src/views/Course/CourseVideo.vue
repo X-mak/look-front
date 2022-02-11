@@ -13,7 +13,7 @@
         }}</span>
         <p
           style="
-            color: rgb(153, 181, 215, 0.8);
+            color: rgba(184, 184, 184);
             font-size: 14px;
             margin-top: 4px;
           "
