@@ -4,7 +4,7 @@ const service = axios.create({
     // process.env.NODE_ENV === 'development' 来判断是否开发环境
     // easy-mock服务挂了，暂时不使用了
     // baseURL: 'https://www.easy-mock.com/mock/5e3633b162df5945932860ef/TEST1',
-    baseURL:'http://localhost:8080',
+    baseURL:'http://localhost:8000',
     timeout: 50000,
     // headers:{'Content-Type':'application/x-www-form-urlencoded'}// 'multipart/form-data'   //  'application/x-www-form-urlencoded';
 });
@@ -38,10 +38,10 @@ service.interceptors.response.use(
     response => {
         if (response.status === 200) {
             let res = response.data;
-            if (res.code === '401') {
-                console.error("token过期，重新登录")
-                router.push("/login")
-            }
+            // if (res.code === '400') {
+            //     console.error("token过期，重新登录")
+            //     router.push("/login")
+            // }
             return res;    
         } else {
             Promise.reject();

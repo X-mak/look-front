@@ -90,7 +90,7 @@
                   style="width: 30px;cursor:pointer"
                   class="thumb"
                   @click="likeComment(item)"
-                  v-if="item.liked"
+                  v-if="!item.liked"
                 />
                 <img
                   src="../../assets/img/like_hover.png"
@@ -250,6 +250,7 @@ export default {
       
     },
     likeComment(item) {
+      console.log("123");
       request({
         url:"/course/comments/like",
         method:"post",

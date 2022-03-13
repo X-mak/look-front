@@ -52,7 +52,7 @@
     </div>
 
     <!-- 动态 -->
-    <el-dropdown style="margin-left: 3%" v-if="logined">
+    <el-dropdown style="margin-left: 3%;cursor: pointer;" v-if="logined">
       <span class="el-dropdown-link"> 动态 </span>
       <template #dropdown>
         <el-dropdown-menu>
@@ -115,7 +115,7 @@
 
     <!-- 观看记录 -->
     <el-dropdown style="margin-left: 3%" v-if="logined">
-      <span class="el-dropdown-link"> 观看记录 </span>
+      <span class="el-dropdown-link" style="cursor: pointer;"> 观看记录 </span>
       <template #dropdown>
         <el-dropdown-menu>
           <el-scrollbar max-height="400px">
@@ -364,5 +364,8 @@ export default {
 .login-info p {
   font-size: large;
   margin-top: 5%;
+}
+.el-dropdown :hover{
+  color: rgb(148, 223, 241, 0.8);
 }
 </style>

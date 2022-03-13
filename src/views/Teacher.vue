@@ -110,6 +110,7 @@ export default {
     },
     changeVisible(v) {
       this.dialogVisible = v;
+      this.load();
     },
     changePage(page) {
       this.pageNum = page;

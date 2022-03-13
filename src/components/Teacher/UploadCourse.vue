@@ -21,7 +21,7 @@
       <el-form-item label="课程封面:">
         <el-upload
           class="avatar-uploader"
-          action="http://localhost:8080/files/video-img"
+          action="http://localhost:8000/files/video-img"
           accept="image/*"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
@@ -40,7 +40,7 @@
       <el-form-item label="课程视频" size="default">
         <el-upload
           class="upload-demo"
-          action="http://localhost:8080/files/video"
+          action="http://localhost:8000/files/video"
           accept="video/*"
           :multiple="false"
           :limit="1"
@@ -58,6 +58,7 @@
           v-model="this.courseClass.age"
           class="m-2"
           placeholder="课程受众"
+          @change="changAge"
         >
           <el-option v-for="item in this.age" :label="item" :value="item">
           </el-option>
@@ -104,14 +105,27 @@ export default {
       videoUrl: "",
       class: {},
       courseClass: {},
-      age: ["小学", "初中", "高中", "大学", "其他"],
-      subject: ["语文", "数学", "英语", "化学", "物理"],
+      age: ["兴趣爱好", "职业技能"],
+      subject: [],
+      hobbyList: [],
+      skillList:[],
     };
   },
   components: {
     Plus,
   },
+  created() {
+     this.hobbyList = this.$store.getters.getHobby;
+      this.skillList = this.$store.getters.getSkill;
+  },
   methods: {
+     changAge(name){
+      if(name == "职业技能"){
+        this.subject = this.skillList;
+      }else if(name == "兴趣爱好"){
+        this.subject = this.hobbyList;
+      }
+    },
     handleAvatarSuccess(res) {
       //头像上传成功
       if (res.code === "400") {
@@ -193,4 +207,8 @@ export default {
 </script>
 
 <style scoped>
+.avatar-uploader-icon{
+  width: 200px;
+  height: 200px;
+}
 </style>

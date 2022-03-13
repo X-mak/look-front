@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>banner</div>
+    <div>banners</div>
     <div class="course-part">
       <el-card style="width: 80%; margin: 10px auto" shadow="never">
         <template #header>

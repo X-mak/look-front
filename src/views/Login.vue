@@ -68,6 +68,7 @@ export default {
             this.$router.push('/');
           }else{
             open(res.msg,'warning');
+            
           }
       })
       }

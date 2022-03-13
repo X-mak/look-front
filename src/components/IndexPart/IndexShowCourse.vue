@@ -6,7 +6,7 @@
       style="
         width: 220px;
         height: 240px;
-        margin: 0 2.85%;
+        margin: -12px 2%;
         display: flex;
         justify-content: center;
       "
@@ -71,6 +71,9 @@ export default {
     flex-direction: row;
     width: 100%;
     margin: 20px auto;
+    background-color: rgba(214, 236, 251, 0.6);
+    border-radius:40px;
+    
 }
 .card p {
   color: rgba(59, 59, 59, 0.8);

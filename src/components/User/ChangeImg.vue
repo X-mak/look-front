@@ -23,7 +23,7 @@
         <el-upload
           class="avatar-uploader"
           accept="image/*"
-          action="http://localhost:8080/files/user-img"
+          action="http://localhost:8000/files/user-img"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
           :show-file-list="false"
@@ -127,4 +127,8 @@ export default {
 </script>
 
 <style scoped>
+.avatar-uploader-icon{
+  width: 200px;
+  height: 200px;
+}
 </style>

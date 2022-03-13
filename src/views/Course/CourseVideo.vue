@@ -11,13 +11,7 @@
         <span style="font-size: 26px; font-weight: bold">{{
           this.course.courseName
         }}</span>
-        <p
-          style="
-            color: rgba(184, 184, 184);
-            font-size: 14px;
-            margin-top: 4px;
-          "
-        >
+        <p style="color: rgb(153, 153, 153); font-size: 14px; margin-top: 4px">
           热度:{{ this.course.clicks }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           发布时间:{{ this.course.publishDate }}
         </p>
@@ -29,6 +23,7 @@
           v-bind="this.options"
           ref="videoPlayer"
           @play="startWatching"
+          @timeupdate="onPlayerTimeupdate($event)"
         ></video-play>
       </div>
     </div>
@@ -127,6 +122,24 @@
       style="margin: 40px auto"
     ></comments-part>
   </div>
+
+  <el-dialog
+    v-model="dialogVisible"
+    title="提示"
+    width="30%"
+    :before-close="handleClose"
+  >
+    <span>您已经观看了此课程一分钟,是否要购买此课程?</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="handleClose">返回课程页面</el-button>
+        <el-button type="primary" @click="buy">
+          <p>购买 {{ this.course.cost }}</p>
+          <el-icon :size="15"><coin /></el-icon
+        ></el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
@@ -136,6 +149,7 @@ import { videoPlay } from "vue3-video-play";
 import request from "../../utils/request";
 import CommentsPart from "../../components/Course/CommentsPart.vue";
 import { ElMessage } from "element-plus";
+import { Coin } from "@element-plus/icons-vue";
 const open = (msg, type) => {
   ElMessage({
     showClose: true,
@@ -145,9 +159,10 @@ const open = (msg, type) => {
 };
 export default {
   name: "",
-  components: { IndexHeader, videoPlay, CommentsPart },
+  components: { IndexHeader, videoPlay, CommentsPart, Coin },
   data() {
     return {
+      dialogVisible: false,
       courseId: 0,
       course: {},
       valid: 0,
@@ -193,7 +208,6 @@ export default {
         method: "get",
       }).then((res) => {
         this.course = res.data;
-
         this.publisher = res.data.userInfo;
         this.options.src = res.data.courseVideo;
         this.options.title = res.data.courseName;
@@ -276,6 +290,36 @@ export default {
     },
     watchUser() {
       this.$router.push("/userPage/" + this.publisher.userAccount);
+    },
+    onPlayerTimeupdate(player) {
+      var time = player.target.currentTime;
+      if (time > 10 && this.valid == -1) {
+        this.$refs.videoPlayer.pause();
+        this.dialogVisible = true;
+      }
+    },
+    handleClose() {
+      this.$router.push({
+        path: "/course",
+        query: {
+          id: this.courseId,
+        },
+      });
+    },
+    buy() {
+      request({
+        url: "/manage/course/" + this.courseId,
+        method: "post",
+        params: { userAccount: this.userInfo.userAccount },
+      }).then((res) => {
+        if (res.code === "400") {
+          open(res.msg, "warning");
+        } else {
+          open(res.msg, "success");
+        }
+      });
+      this.load();
+      this.dialogVisible=false;
     },
   },
 };

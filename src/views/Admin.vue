@@ -71,7 +71,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { toRaw } from "vue";
 import request from "../utils/request";
 import { ElMessage } from "element-plus";
@@ -104,6 +103,7 @@ export default {
   },
   methods: {
     load() {
+      open("wda","warning")
       request({
         url: "/course/status/" + this.pageNum,
         method: "get",
@@ -125,6 +125,7 @@ export default {
     update(row) {
       this.visible = true;
       this.currentCourse = row;
+      console.log(row);
     },
     access(row) {
       row = toRaw(row);
@@ -143,9 +144,7 @@ export default {
           open(res.msg, "success");
         }
       });
-      setTimeout(() => {
-        this.load();
-      });
+      this.load();
     },
   },
 };

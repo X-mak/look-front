@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="dialogVisible"
-    title="上传视频"
+    title="更新视频"
     width="40%"
     @closed="cancelClass"
     top="50px"
@@ -21,7 +21,7 @@
       <el-form-item label="课程封面:">
         <el-upload
           class="avatar-uploader"
-          action="http://localhost:8080/files/video-img"
+          action="http://localhost:8000/files/video-img"
           accept="image/*"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
@@ -40,7 +40,7 @@
       <el-form-item label="课程视频" size="default">
         <el-upload
           class="upload-demo"
-          action="http://localhost:8080/files/video"
+          action="http://localhost:8000/files/video"
           accept="video/*"
           :multiple="false"
           :limit="1"
@@ -52,26 +52,6 @@
             <div class="el-upload__tip">视频文件不能大于500MB!</div>
           </template>
         </el-upload>
-      </el-form-item>
-      <el-form-item label="课程受众" size="default">
-        <el-select
-          v-model="this.class.courseClass.age"
-          class="m-2"
-          placeholder="课程受众"
-        >
-          <el-option v-for="item in this.age" :label="item" :value="item">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="课程类型" size="default">
-        <el-select
-          v-model="this.class.courseClass.subject"
-          class="m-2"
-          placeholder="课程类型"
-        >
-          <el-option v-for="item in this.subject" :label="item" :value="item">
-          </el-option>
-        </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -106,16 +86,26 @@ export default {
       subject: ["语文", "数学", "英语", "化学", "物理"],
       class:{},
       staticClass:{},
+      tmp:{},
     };
   },
   created() {
-    this.class = toRaw(this.course);
+    this.tmp = toRaw(this.course);
+    this.load();
     this.staticClass = JSON.parse(JSON.stringify(this.class))
   },
   components: {
     Plus,
   },
   methods: {
+    load(){
+      request({
+        url:"course/"+this.tmp.id,
+        method:"get",
+      }).then((res)=>{
+        this.class = res.data;
+      })
+    },
     handleAvatarSuccess(res) {
       //头像上传成功
       if (res.code === "400") {
